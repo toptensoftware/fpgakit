@@ -1,5 +1,18 @@
+// Represents a reflector bit packet
+// 
+// BitPackets are a sequence of bytes representing a fixed number of 
+// bits.  They match how the data is transmitted serially:
+//
+// First byte in packet has MSB set and the first 7 data bits
+// Remaining bytes have MSB clear and each contains the next 7 data bits
+// Bytes are transmitted LSB first.  ie: first byte = data(6 downto 0),
+// second byte = data(13 downto 7) etc...
 class BitPacket
 {
+    // Constructs a new bit packet of specified width (in bits)
+    // with an optional notify callback for when value changed
+    // Instead of width you can also pass a string with the bit values
+    // to initialize.  Width will be the length of the string
     constructor(width, notify)
     {
         if (typeof(width) === "string")
@@ -18,11 +31,13 @@ class BitPacket
             this.notify = notify;
     }
 
+    // width property
     get width() 
     { 
         return this._width 
     };
 
+    // Get the bits in the specified bit range as a string
     getBits(msb, lsb)
     {
         // Check bit range
@@ -34,6 +49,7 @@ class BitPacket
         return this.bits.substr(this.width - msb-1, msb - lsb + 1);
     }
     
+    // Set the bits in a specified bit range from a string
     setBits(msb, lsb, value)
     {
         // Check bit range
@@ -50,11 +66,13 @@ class BitPacket
         this.bits = `${oldBits.substr(0, this.width - msb - 1)}${value}${oldBits.substr(this.width - lsb)}`;
     }
 
+    // Get the entire bit range as a string
     get bits() 
     { 
         return this.toString() 
     };
 
+    // Set the entire bit range from a string
     set bits(value) 
     {
         if (value.length != this._width)
@@ -72,6 +90,7 @@ class BitPacket
             this.notify();
     }
 
+    // Get the entire bit range as a string
     toString()
     {
         let bits = "";
@@ -83,13 +102,21 @@ class BitPacket
         return bits.substr(-this._width);
     }
 
+    // For a give number of bits, work out how many packet bytes are
+    // required to store it.
     static byteCountForBitWidth(bitWidth)
     {
         return Math.floor((bitWidth + 6) / 7);
     }
 
-
-    // Helper to enumerate the bit positions of a word bit range within a serial packet
+    // Helper to enumerate the bit positions of a bit range within a packet
+    // Each enumerated value returns
+    //   - byte           the byte number within the packet
+    //   - shiftByte      how much the byte needs to be shifted to the right
+    //                    to move the bits into the least significant position
+    //   - mask           how to mask the shift byte to get just the bits in the range
+    //   - shiftPacket    how much to shift the masked value to the left to position
+    //                    in correctly in the final extract bit range value.
     static *getBitPositions(msb, lsb)
     {
         let startBytePos = Math.floor(lsb / 7);
@@ -104,15 +131,16 @@ class BitPacket
                 byte: i, 
                 shiftByte: startBitPos, 
                 mask: Math.pow(2, endBitPos - startBitPos + 1) - 1, 
-                shiftPacket,
-                startBitPos, 
-                endBitPos
+                shiftPacket
             }
 
             shiftPacket += endBitPos - startBitPos + 1;
         }
     }
 
+    // Build a get accessor function body that
+    // can extract a value from a specified bit range
+    // and specified BitPacket object reference
     static buildGetAccessorBody(packet, msb, lsb)
     {
         let fnGet = "";
@@ -133,13 +161,12 @@ class BitPacket
         return `    let buffer = ${packet}._buffer; return ${fnGet};`;
     }
     
+    // Build a set accessor function body that
+    // can set the value of a specified bit range
+    // and specified BitPacket object reference
     static buildSetAccessorBody(packet, msb, lsb, name)
     {
         let fnSet =  `let buffer = ${packet}._buffer;\n`;
-
-//        let checkMask = Math.pow(2, msb - lsb + 1) - 1;
-//        fnSet += `    if ((value & 0x${checkMask.toString(16).toUpperCase()}) != value)\n`;
-//        fnSet += '        throw new Error(`value 0x${value.toString(16).toUpperCase()} out of range for accessor "' + name + '" defined as (' + msb + '..' + lsb + ').`);\n';
 
         for (let i of BitPacket.getBitPositions(msb,lsb))
         {
@@ -163,16 +190,6 @@ class BitPacket
         fnSet += `    if (${packet}.notify) ${packet}.notify()`;
         return fnSet;
     }
-    
-    static defineAccessor(obj, name, msb, lsb)
-    {
-        // Define properties
-        Object.defineProperty(obj, name, {
-            get: Function([], BitPacket.buildGetAccessorBody("this", msb, lsb)),
-            set: Function(['value'], BitPacket.buildSetAccessorBody("this.buffer", msb, lsb, name)),
-        });
-    }
-
 }
 
 

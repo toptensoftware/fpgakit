@@ -1,0 +1,33 @@
+$date
+  Sun Jan 19 00:48:30 2020
+$end
+$version
+  Reflector v1.0
+$end
+$timescale
+  1 ms
+$end
+$scope module signals $end
+$var reg 8 ! o_leds $end
+$var reg 12 " o_counter $end
+$var reg 4 # i_buttons $end
+$var reg 8 $ i_counter $end
+$upscope $end
+$enddefinitions $end
+$dumpvars
+#0
+bUUUUUUUU !
+bUUUUUUUUUUUU "
+bUUUU #
+bUUUUUUUU $
+#28
+b00000001 !
+b000000000000 "
+b0000 #
+b00000000 $
+#506
+b00000010 !
+b000000000001 "
+#1007
+b00000100 !
+b000000000010 "
