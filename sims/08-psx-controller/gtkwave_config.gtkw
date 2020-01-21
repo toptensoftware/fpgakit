@@ -1,0 +1,49 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Tue Jan 21 12:31:06 2020
+[*]
+[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/08-psx-controller/build/out.vcd"
+[dumpfile_mtime] "Tue Jan 21 12:29:15 2020"
+[dumpfile_size] 170040
+[savefile] "/home/brad/Projects/big80/fpgakit/sims/08-psx-controller/gtkwave_config.gtkw"
+[timestart] 0
+[size] 1280 751
+[pos] -1 -1
+*-35.609528 52100000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.client.
+[sst_width] 196
+[signals_width] 274
+[sst_expanded] 1
+[sst_vpaned_height] 208
+@200
+-Host
+@28
+testbench.host.i_transact
+@22
+testbench.host.i_data_tx[7:0]
+testbench.host.o_data_rx[7:0]
+@29
+testbench.host.o_transact_end
+@28
+testbench.host.o_acked
+@200
+-
+-PSX Signals
+@28
+testbench.s_psx_clock
+testbench.s_psx_hoci
+testbench.s_psx_hico
+testbench.s_psx_ack
+@200
+-
+-Client
+@28
+testbench.client.i_psx_att
+@22
+testbench.client.o_data_rx[7:0]
+testbench.client.i_data_tx[7:0]
+@28
+testbench.client.o_transact_end
+[pattern_trace] 1
+[pattern_trace] 0
