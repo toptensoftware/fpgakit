@@ -2,7 +2,7 @@
 --
 -- PsxIoClient
 --
--- Handle comms with from Playstation 1/2
+-- Implements wire protocol or a Playstation 1/2 controller
 --
 -- References:
 --     https://store.curiousinventor.com/guides/PS2
@@ -46,7 +46,7 @@ end PsxIoClient;
 
 architecture Behavioral of PsxIoClient is
 
-    constant c_delay_counter_limit : integer := integer(real(p_clken_hz) * 2.0 / 1_000_000.0 + 0.5);
+    constant c_delay_counter_limit : integer := integer(real(p_clken_hz) * 3.0 / 1_000_000.0 + 0.5);
     signal s_delay_counter : integer range 0 to c_delay_counter_limit;
 
     signal s_bit_counter : integer range 0 to 7;

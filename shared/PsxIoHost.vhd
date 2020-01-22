@@ -2,7 +2,7 @@
 --
 -- PsxIoHost
 --
--- Handle comms with a Playstation 1/2 controller
+-- Handle wire protocol with a Playstation 1/2 controller
 --
 -- References:
 --     https://store.curiousinventor.com/guides/PS2
@@ -37,6 +37,7 @@ port
 
     -- Data Inteface
     i_transact : in std_logic;                      -- Start a tx/rx transaction
+    i_wait_for_ack : in std_logic;                  -- Whether to wait for ack
     i_data_tx : in std_logic_vector(7 downto 0);    -- Data byte to transmit
     o_data_rx : out std_logic_vector(7 downto 0);   -- Data byte received
     o_busy : out std_logic;                         -- '1' when transacting
@@ -165,7 +166,13 @@ s_state_integer <= states'pos(s_state);
                                 -- Falling edge, shift out the next bit
                                 s_data_shift_tx <= '1' & s_data_shift_tx(7 downto 1);
                                 if s_bit_counter = 10 then 
-                                    s_state <= state_wait_ack;
+                                    if i_wait_for_ack = '1' then    
+                                        s_state <= state_wait_ack;
+                                    else
+                                        o_acked <= '1';
+                                        s_state <= state_idle;
+                                        o_transact_end <= '1';
+                                    end if;
                                 end if;
                             else
                                 -- Rising edge, shift in the next bit
