@@ -1,7 +1,7 @@
 ##############################################################
 #
 # Xilinx Core Generator version 14.7
-# Date: Thu Jan 23 04:36:45 2020
+# Date: Sat Jan 25 02:57:09 2020
 #
 ##############################################################
 #
@@ -39,11 +39,11 @@ SET vhdlsim = true
 SELECT MIG family Xilinx,_Inc. 3.61
 # END Select
 # BEGIN Parameters
-CSET component_name=mimas_lpddr
-CSET xml_input_file=./mimas_lpddr/user_design/mig.prj
+CSET component_name=mimas_lpddr_2
+CSET xml_input_file=./mimas_lpddr_2/user_design/mig.prj
 # END Parameters
 # BEGIN Extra information
 MISC pkg_timestamp=2013-10-13T18:46:09Z
 # END Extra information
 GENERATE
-# CRC: 90f70f94
+# CRC: 27635405

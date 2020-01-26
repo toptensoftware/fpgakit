@@ -9,7 +9,14 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}//logiccap.js",
-            "console": "externalTerminal",
+            "args": [
+                "--port:/dev/ttyACM1",
+                "--baud:115200",
+                "--sampleRate:1774000",
+                "--autoview:150",
+                "--vcdfile:logiccap.vcd",
+                "s_calib_done,s_ram_write,s_ram_read,s_ram_wait,s_ram_addr(15),s_ram_din(8),s_ram_dout(8),s_cpu_addr(16),s_cpu_din(8),s_cpu_dout(8),s_cpu_mreq_n,s_cpu_iorq_n,s_cpu_rd_n,s_cpu_wr_n"
+            ]
         }
     ]
 }

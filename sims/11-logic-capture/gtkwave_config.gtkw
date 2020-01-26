@@ -1,0 +1,35 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Sat Jan 25 22:36:17 2020
+[*]
+[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/11-logic-capture/build/out.vcd"
+[dumpfile_mtime] "Sat Jan 25 22:36:11 2020"
+[dumpfile_size] 3959502
+[savefile] "/home/brad/Projects/big80/fpgakit/sims/11-logic-capture/gtkwave_config.gtkw"
+[timestart] 0
+[size] 1280 751
+[pos] -1 -1
+*-39.931454 200000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.cap.
+[treeopen] testbench.cap.txer.
+[sst_width] 196
+[signals_width] 274
+[sst_expanded] 1
+[sst_vpaned_height] 208
+@28
+testbench.cap.i_trigger
+@22
+testbench.cap.i_signals[3:0]
+@28
+testbench.cap.s_full
+testbench.cap.s_triggered
+testbench.cap.s_tx_data_available
+testbench.cap.s_tx_busy
+testbench.cap.o_uart_tx
+@29
+testbench.cap.txer.uart_tx.i_data_available
+@22
+testbench.cap.txer.uart_tx.i_data[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

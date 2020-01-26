@@ -1,7 +1,3 @@
 # Make script
-#include ../mimasv2.mk
+include ../mimasv2.mk
 
-disabled:
-
-
-clean:

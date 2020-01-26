@@ -73,7 +73,7 @@ class VcdFileWriter
     close()
     {
         // Write final signal values
-        this.writeSignals();
+        this.writeSignals(true);
 
         // Close
         fs.closeSync(this.fd);
@@ -88,11 +88,17 @@ class VcdFileWriter
     }
 
     // Write the current timestamp and all changed signal values
-    writeSignals()
+    writeSignals(final)
     {
         // Remember if the time stamp has been written (only write 
         // it if we have changed values at this timestamp)
         let timeWritten = false;
+
+        if (final)
+        {
+            this.write(`#${this.currentTime}`);   
+            timeWritten = true;
+        }
 
         // Write all changed signals
         for (let i=0; i<this.signals.length; i++)

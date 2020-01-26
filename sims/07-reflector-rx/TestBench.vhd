@@ -67,7 +67,7 @@ begin
     div : entity work.ClockDivider
     generic map
     (
-        p_period => 120_000
+        p_period => 40_000
     )
     port map
     ( 

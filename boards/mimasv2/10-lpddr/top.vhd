@@ -8,63 +8,67 @@ use unisim.vcomponents.all;
 entity top is
 port 
 ( 
-	-- These signals must match what's in the .ucf file
-	i_clock_100mhz : in std_logic;
-	c3_sys_rst_n : in std_logic;
+	i_clock_100mhz_unbuffered : in std_logic;
 	i_button_b : in std_logic;
 	o_leds : out std_logic_vector(7 downto 0);
 	o_seven_segment : out std_logic_vector(7 downto 0);
 	o_seven_segment_en : out std_logic_vector(2 downto 0);
 
-	-- Memory controller
-	mcb3_dram_dq    : inout  std_logic_vector(15 downto 0);
-	mcb3_dram_a     : out std_logic_vector(12 downto 0);
-	mcb3_dram_ba    : out std_logic_vector(1 downto 0);
-	mcb3_dram_cke   : out std_logic;
-	mcb3_dram_ras_n : out std_logic;
-	mcb3_dram_cas_n : out std_logic;
-	mcb3_dram_we_n  : out std_logic;
-	mcb3_dram_dm    : out std_logic;
-	mcb3_dram_udqs  : inout std_logic;
-	mcb3_rzq        : inout std_logic;
-	mcb3_dram_udm   : out std_logic;
-	mcb3_dram_dqs   : inout std_logic;
-	mcb3_dram_ck    : out std_logic;
-	mcb3_dram_ck_n  : out std_logic
+	-- Folded memory controller bus
+	mcb_xcl : out std_logic_vector(1 downto 0);
+	mcb_xtx : out std_logic_vector(20 downto 0);
+	mcb_xtr : inout  std_logic_vector(18 downto 0)
 );
 end top;
 
 architecture Behavioral of top is
-	signal s_reset : std_logic;
-	signal s_CLK_100Mhz_buffered : std_logic;
-	signal s_clock_80mhz : std_logic;
-	signal s_clken_cpu : std_logic;
-	signal s_seven_seg_value : std_logic_vector(11 downto 0);
 
-	signal c3_calib_done : std_logic;
-begin
+	-- Clocking
+	signal s_reset : std_logic;
+	signal s_clock_80mhz : std_logic;
+	signal s_clock_100mhz : std_logic;
+	signal s_clken_cpu : std_logic;
+
+	-- MID Port
+	signal mig_xtx_p0 : std_logic_vector(80 downto 0);
+	signal mig_xrx_p0 : std_logic_vector(56 downto 0);
+
+	-- Leds
+	signal s_seven_seg_value: std_logic_vector(11 downto 0);
+	signal debug : std_logic_vector(7 downto 0);
+
+	-- Traffic generator
+	signal s_state : integer range 0 to 15 := 0;
+	signal s_sri_wr : std_logic;
+	signal s_sri_rd : std_logic;
+	signal s_sri_wr_pulse : std_logic;
+	signal s_sri_rd_pulse : std_logic;
+	signal s_sri_wait : std_logic;
+    signal s_sri_addr : std_logic_vector(29 downto 0);
+    signal s_sri_dout : std_logic_vector(7 downto 0);
+    signal s_sri_din : std_logic_vector(7 downto 0);
+
+	begin
 
 	-- Reset signal
 	s_reset <= (not i_button_b);
 
-	-- o_leds
-	o_leds <= "0000000" & c3_calib_done;
+	-- Debug LEDs
+	o_leds <= debug;
 
-	-- Seven segment value
-	s_seven_seg_value <= "000000000000";
-
+	-- Clock Buffer
     clk_ibufg : IBUFG
     port map
     (
-		I => i_clock_100mhz,
-		O => s_CLK_100MHz_buffered
+		I => i_clock_100mhz_unbuffered,
+		O => s_clock_100mhz
 	);
 
 	 -- DCM
 	dcm : entity work.ClockDCM
 	port map
 	(
-		CLK_IN_100MHz => s_CLK_100MHz_buffered,
+		CLK_IN_100MHz => s_clock_100mhz,
 		CLK_OUT_100MHz => open,
 		CLK_OUT_80MHz => s_clock_80mhz
 	);
@@ -101,70 +105,134 @@ begin
 
 
 	-- LPDDR Wrapper
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/mimas_lpddr.vhd
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/memc3_infrastructure.vhd
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/memc3_wrapper.vhd
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/mcb_raw_wrapper.vhd
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/mcb_soft_calibration_top.vhd
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/mcb_soft_calibration.vhd
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/iodrp_controller.vhd
-	--xilt:require:./coregen/mimas_lpddr/user_design/rtl/iodrp_mcb_controller.vhd
-	lpddr : entity work.mimas_lpddr
+	lpddr : entity work.MimasSinglePortSDRAM
 	generic map
 	(
 		C3_INPUT_CLK_TYPE => "IBUFG"
 	)
 	port map
 	(
-		mcb3_dram_dq     => mcb3_dram_dq,
-		mcb3_dram_a      => mcb3_dram_a,
-		mcb3_dram_ba     => mcb3_dram_ba,
-		mcb3_dram_cke    => mcb3_dram_cke,
-		mcb3_dram_ras_n  => mcb3_dram_ras_n,
-		mcb3_dram_cas_n  => mcb3_dram_cas_n,
-		mcb3_dram_we_n   => mcb3_dram_we_n,
-		mcb3_dram_dm     => mcb3_dram_dm,
-		mcb3_dram_udqs   => mcb3_dram_udqs,
-		mcb3_rzq         => mcb3_rzq,
-		mcb3_dram_udm    => mcb3_dram_udm,
-		mcb3_dram_dqs    => mcb3_dram_dqs,
-		mcb3_dram_ck     => mcb3_dram_ck,
-		mcb3_dram_ck_n   => mcb3_dram_ck_n,
+		mcb_xtr => mcb_xtr,
+		mcb_xtx => mcb_xtx,
+		mcb_xcl => mcb_xcl,
 
-		c3_sys_clk       => s_CLK_100MHz_buffered,
-		c3_sys_rst_n     => c3_sys_rst_n,
-		c3_calib_done    => c3_calib_done,
-		c3_clk0          => open,
-		c3_rst0          => open,
+		i_sys_clk       => s_clock_100mhz,
+		i_sys_rst_n     => '0',
+		o_calib_done    => open,
+		o_clk0          => open,
+		o_rst0          => open,
 
-		c3_p0_cmd_clk => s_clock_80mhz,
-		c3_p0_cmd_en => s_clken_cpu,
-		c3_p0_cmd_instr => (others => '0'),
-		c3_p0_cmd_bl => (others => '0'),
-		c3_p0_cmd_byte_addr => (others => '0'),
-		c3_p0_cmd_empty => open,
-		c3_p0_cmd_full => open,
-		
-		c3_p0_wr_clk => s_clock_80mhz,
-		c3_p0_wr_en => s_clken_cpu,
-		c3_p0_wr_mask => (others => '0'),
-		c3_p0_wr_data => (others => '0'),
-		c3_p0_wr_full => open,
-		c3_p0_wr_empty => open,
-		c3_p0_wr_count => open,
-		c3_p0_wr_underrun => open,
-		c3_p0_wr_error => open,
-		
-		c3_p0_rd_clk => s_clock_80mhz,
-		c3_p0_rd_en => s_clken_cpu,
-		c3_p0_rd_data => open,
-		c3_p0_rd_full => open,
-		c3_p0_rd_empty => open,
-		c3_p0_rd_count => open,
-		c3_p0_rd_overflow => open,
-		c3_p0_rd_error => open
+		mig_xtx_p0 => mig_xtx_p0,
+		mig_xrx_p0 => mig_xrx_p0
 	);
 
+	sri : entity work.SimpleRamInterface
+	port map
+	( 
+		i_clock => s_clock_80mhz,
+		i_clken => s_clken_cpu,
+		i_reset => s_reset,
+		i_rd => s_sri_rd_pulse,
+		i_wr => s_sri_wr_pulse,
+		i_addr => s_sri_addr,
+		i_data => s_sri_din,
+		o_data => s_sri_dout,
+		o_wait => s_sri_wait,
+		mig_xtx => mig_xtx_p0,
+		mig_xrx => mig_xrx_p0
+	);
+
+	mem_rd_edge_detector : entity work.EdgeDetector
+	port map
+	( 
+		i_clock => s_clock_80mhz,
+		i_clken => s_clken_cpu,
+		i_reset => s_reset,
+		i_signal => s_sri_rd,
+		o_pulse => s_sri_rd_pulse
+	);
+	mem_wr_edge_detector : entity work.EdgeDetector
+	port map
+	( 
+		i_clock => s_clock_80mhz,
+		i_clken => s_clken_cpu,
+		i_reset => s_reset,
+		i_signal => s_sri_wr,
+		o_pulse => s_sri_wr_pulse
+	);
+
+	s_seven_seg_value <= s_sri_addr(11 downto 0);
+
+	traffic : process(s_clock_80mhz)
+	begin
+		if rising_edge(s_clock_80mhz) then
+			if s_reset = '1' then
+				s_sri_din <= (others => '0');
+				s_sri_addr <= (others => '0');
+				s_sri_rd <= '0';
+				s_sri_wr <= '0';
+				s_state <= 0;
+				debug <= (others => '0');
+			elsif s_clken_cpu = '1' then
+
+				s_sri_rd <= '0';	
+				s_sri_wr <= '0';
+
+				case s_state is
+					when 0 =>
+						s_sri_wr <= '1';
+						s_state <= 1;
+						debug <= "00000001";
+
+					when 1 =>
+						s_state <= 2;
+
+					when 2 =>
+						if s_sri_wait = '0' then
+							s_sri_din <= std_logic_vector(unsigned(s_sri_din) + 1);
+							if s_sri_din = x"ff" then
+								s_sri_addr(7 downto 0) <= (others => '0');
+								s_state <= 8;
+							else
+								s_sri_addr <= std_logic_vector(unsigned(s_sri_addr) + 1);
+								s_state <= 0;
+							end if;
+						end if;
+
+					when 8 =>
+						s_sri_rd <= '1';
+						s_state <= 9;
+						debug <= "00000010";
+
+					when 9 =>
+						s_state <= 10;
+
+					when 10 =>
+						if s_sri_wait = '0' then
+							if (s_sri_dout /= s_sri_din) then	
+								s_state <= 14;
+							else
+							 	s_sri_din <= std_logic_vector(unsigned(s_sri_din) + 1);
+								s_sri_addr <= std_logic_vector(unsigned(s_sri_addr) + 1);
+								if s_sri_din = x"ff" then
+									s_state <= 0;
+								else
+									s_state <= 8;
+								end if;
+							end if;
+						end if;
+
+					when 14 => 
+						debug <= "11111111";
+
+					when others =>
+						null;
+
+				end case;
+
+			end if;
+		end if;
+	end process;
 
 end Behavioral;
 
