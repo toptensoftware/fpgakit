@@ -8,7 +8,7 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceFolder}//sandbox.js",
+            "program": "${workspaceFolder}//logiccap.js",
             "console": "externalTerminal",
         }
     ]
