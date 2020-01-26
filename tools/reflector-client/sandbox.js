@@ -27,7 +27,7 @@ let ReflectorUI = require('./ReflectorUI');
     let reflector = new Reflector({
         receiveBitCount: 16,
         sendBitCount: 21,
-        //portName: "/dev/ttyACM1",
+        portName: "COM4",
         portOptions: { 
             baudRate: 115200 
         },

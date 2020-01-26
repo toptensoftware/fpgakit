@@ -16,3 +16,6 @@ build/
 
 # Node Stuff
 node_modules
+
+# Temp reflector client files
+*.vcd.tmp
