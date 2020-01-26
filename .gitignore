@@ -19,3 +19,4 @@ node_modules
 
 # Temp reflector client files
 *.vcd.tmp
+*.vcd
