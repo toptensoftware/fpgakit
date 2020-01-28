@@ -26,6 +26,8 @@ package FunctionLib is
     -- Find the minimum of two integers.
     function IntMin(a : in integer; b : in integer) return integer;
 
+    function format_std_logic_vector( a: std_logic_vector) return string;
+
 end package;
 
 
@@ -81,4 +83,13 @@ begin
     end if;
 end function IntMin;
   
+function format_std_logic_vector( a: std_logic_vector) return string is
+    variable b : string (a'length downto 1) := (others => NUL);
+begin
+        for i in a'length-1 downto 0 loop
+        b(i+1) := std_logic'image(a((i)))(2);
+        end loop;
+    return b;
+end function;
+
 end package body;
