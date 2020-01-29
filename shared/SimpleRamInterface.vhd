@@ -20,8 +20,8 @@ port
     i_reset : in std_logic;                 -- Reset (synchronous, active high)
 
     -- Simple read/write single byte interface
-    i_rd : in std_logic;
     i_wr : in std_logic;
+    i_cs : in std_logic;
     i_addr : in std_logic_vector(29 downto 0);
     i_data : in std_logic_vector(7 downto 0);
     o_data : out std_logic_vector(7 downto 0);
@@ -67,7 +67,7 @@ port map
     i_clock => i_clock,
     i_clken => i_clken,
     i_reset => i_reset,
-    i_rd => i_rd,
+    i_cs => i_cs,
     i_wr => i_wr,
     i_addr => i_addr,
     i_data => i_data,

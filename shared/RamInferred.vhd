@@ -33,7 +33,7 @@ end RamInferred;
 architecture behavior of RamInferred is 
 	constant c_mem_depth : integer := 2**p_addr_width;
 	type mem_type is array(0 to c_mem_depth-1) of std_logic_vector(p_data_width-1 downto 0);
-	shared variable ram : mem_type := (others => '0');
+	shared variable ram : mem_type;
 begin
 
 	process (i_clock)
