@@ -1,21 +1,21 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Jan 28 22:06:13 2020
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Tue Jan 28 23:40:11 2020
 [*]
-[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/13-sim-mig-port/build/out.vcd"
-[dumpfile_mtime] "Tue Jan 28 22:05:09 2020"
-[dumpfile_size] 95282
-[savefile] "/home/brad/Projects/big80/fpgakit/sims/13-sim-mig-port/gtkwave_config.gtkw"
-[timestart] 9488000000
-[size] 1280 751
+[dumpfile] "/home/brad/Projects/fpgakit/sims/13-sim-mig-port/build/out.vcd"
+[dumpfile_mtime] "Tue Jan 28 23:39:30 2020"
+[dumpfile_size] 94989
+[savefile] "/home/brad/Projects/fpgakit/sims/13-sim-mig-port/gtkwave_config.gtkw"
+[timestart] 10332000000
+[size] 1920 1023
 [pos] -1 -1
-*-29.771437 10100000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-28.846329 11900000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [treeopen] testbench.mig.
 [sst_width] 236
 [signals_width] 342
 [sst_expanded] 1
-[sst_vpaned_height] 208
+[sst_vpaned_height] 304
 @28
 testbench.s_clock
 testbench.s_clken
@@ -24,9 +24,8 @@ testbench.mig.mig_port_calib_done
 -
 @22
 testbench.mig.cmd_fifo.i_data[38:0]
-@29
-testbench.mig.cmd_fifo.i_write
 @28
+testbench.mig.cmd_fifo.i_write
 testbench.mig.cmd_fifo.i_read
 @22
 testbench.mig.cmd_fifo.o_count[3:0]
@@ -48,8 +47,9 @@ testbench.mig.mig_port_cmd_instr[2:0]
 @22
 testbench.mig.mig_port_rd_count[6:0]
 testbench.mig.mig_port_rd_data[31:0]
-@28
+@29
 testbench.mig.mig_port_rd_empty
+@28
 testbench.mig.mig_port_rd_en
 testbench.mig.mig_port_rd_error
 testbench.mig.mig_port_rd_full

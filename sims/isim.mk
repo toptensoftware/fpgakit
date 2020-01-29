@@ -13,9 +13,9 @@ EXE = $(BUILDDIR)/$(TOPMODULE)-isim
 $(EXE): $(INPUTFILES)
 	xilt buildsim --topmodule:$(TOPMODULE) $(INPUTFILES)
 
-# View (ie launch gtkwave)
+# View (ie launch ISim)
 view: $(EXE)
-	@cd $(BUILDDIR); ./$(TOPMODULE)-isim -gui
+	@cd $(BUILDDIR); touch waves.wcfg; ./$(TOPMODULE)-isim -gui -view waves.wcfg
 
 # Clean
 clean:

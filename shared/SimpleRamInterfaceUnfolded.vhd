@@ -75,12 +75,12 @@ architecture Behavioral of SimpleRamInterfaceUnfolded is
     signal s_updated_current_byte_1 : std_logic_vector(7 downto 0);
     signal s_updated_current_byte_2 : std_logic_vector(7 downto 0);
     signal s_updated_current_byte_3 : std_logic_vector(7 downto 0);
-    signal s_is_current_addr : std_logic;
+    signal s_is_current_word : std_logic;
     signal s_have_current_word : std_logic;
 begin
 
     -- Generate wait signal
-	o_wait <= '0' when s_state = state_idle and i_wr = '0' and (s_is_current_addr = '1' or i_cs = '0') else '1';
+	o_wait <= '0' when s_state = state_idle and (s_is_current_word = '1' or i_cs = '0') else '1';
 
     -- MCB address is the byte address with lowest two bits removed
     mig_port_cmd_byte_addr <= i_addr(i_addr'high downto 2) & "00";
@@ -89,7 +89,7 @@ begin
 	mig_port_cmd_bl <= "000000";  
 
     -- Does the input address match the current address (excluding lowest two bits)
-    s_is_current_addr <= '1' when s_current_addr(29 downto 2) = i_addr(29 downto 2) else '0';
+    s_is_current_word <= '1' when s_current_addr(29 downto 2) = i_addr(29 downto 2) and s_have_current_word = '1' else '0';
 
     -- Write byte mapping
     mig_port_wr_data <= i_data & i_data & i_data & i_data;
@@ -155,7 +155,7 @@ begin
 
                                 -- Start read operation (if necessary)
                                 if mig_port_cmd_full = '0' and mig_port_calib_done = '1' then
-                                    if s_is_current_addr = '0' then
+                                    if s_is_current_word = '0' then
                                         -- Read instruction
                                         mig_port_cmd_instr <= "001";
                                         mig_port_cmd_en <= '1';
@@ -185,7 +185,7 @@ begin
 							mig_port_cmd_instr <= "000";		-- write
 							mig_port_cmd_en <= '1';
 							s_state <= state_idle;
-                            if s_is_current_addr = '1' then
+                            if s_is_current_word = '1' then
                                 s_current_word <= s_updated_current_word;
                                 s_current_addr <= i_addr;
                             end if;
@@ -193,7 +193,7 @@ begin
 
 					when state_read_when_ready =>
 						if mig_port_cmd_full = '0' and mig_port_calib_done = '1' then
-                            if s_is_current_addr = '0' then
+                            if s_is_current_word = '0' then
                                 mig_port_cmd_instr <= "001";		-- read
                                 mig_port_cmd_en <= '1';
                                 s_state <= state_wait_read;

@@ -1,38 +1,42 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Jan 28 22:28:48 2020
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Wed Jan 29 01:58:14 2020
 [*]
-[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/14-simple-ram-interface/build/out.vcd"
-[dumpfile_mtime] "Tue Jan 28 22:27:18 2020"
-[dumpfile_size] 151973
-[savefile] "/home/brad/Projects/big80/fpgakit/sims/14-simple-ram-interface/gtkwave_config.gtkw"
-[timestart] 9403000000
-[size] 1280 751
+[dumpfile] "/home/brad/Projects/fpgakit/sims/14-simple-ram-interface/build/out.vcd"
+[dumpfile_mtime] "Wed Jan 29 01:57:18 2020"
+[dumpfile_size] 154852
+[savefile] "/home/brad/Projects/fpgakit/sims/14-simple-ram-interface/gtkwave_config.gtkw"
+[timestart] 17930000000
+[size] 1920 1151
 [pos] -1 -1
-*-30.572197 13200000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-30.834126 22200000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [treeopen] testbench.mig.
 [sst_width] 236
 [signals_width] 331
 [sst_expanded] 1
-[sst_vpaned_height] 208
+[sst_vpaned_height] 348
 @28
 testbench.mig.mig_port_calib_done
-@420
-testbench.s_state
-@28
-testbench.s_clock
-testbench.s_clken
 @200
 -
-@29
-testbench.mig.cmd_fifo.i_write
 @28
-testbench.mig.cmd_fifo.i_read
+testbench.sri.i_clock
+testbench.sri.i_clken
+testbench.sri.i_reset
+testbench.sri.i_cs
+testbench.sri.i_wr
 @22
-testbench.mig.cmd_fifo.o_count[3:0]
-testbench.mig.cmd_fifo.i_data[38:0]
-testbench.mig.cmd_fifo.o_data[38:0]
+testbench.sri.i_addr[29:0]
+testbench.sri.i_data[7:0]
+@23
+testbench.sri.o_data[7:0]
+@28
+testbench.sri.o_wait
+@200
+-
+@420
+testbench.mig.s_state
 @200
 -
 -Command

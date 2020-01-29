@@ -68,7 +68,7 @@ begin
     div : entity work.ClockDivider
     generic map
     (
-        p_period => 10
+        p_period => 20
     )
     port map
     ( 
@@ -156,7 +156,7 @@ begin
         if rising_edge(s_clock) then
             if s_reset = '1' then
                 s_sri_wr <= '0';
-                s_sri_cs <= '0';
+                s_sri_cs <= '1';
                 s_sri_addr16 <= (others => '0');
                 s_sri_din <= (others => '0');
                 s_state <= 0;
@@ -165,11 +165,12 @@ begin
                 case s_state is
 
                     when 0 => 
-                        s_sri_wr <= '1';
-                        s_sri_cs <= '1';
-                        s_sri_addr16 <= (others => '0');
-                        s_sri_din <= x"A6";
-                        s_state <= 1;
+                        if s_sri_wait = '0' then
+									s_sri_wr <= '1';
+									s_sri_addr16 <= (others => '0');
+									s_sri_din <= x"A6";
+									s_state <= 1;
+								end if;
 
                     when 1 =>
                         if s_sri_wait = '0' then
@@ -180,14 +181,17 @@ begin
                         s_sri_addr16 <= x"0001";
                         s_state <= 3;
 
-
                     when 3 => 
                         s_sri_addr16 <= x"0010";
-                        s_state <= 3;
+                        s_state <= 4;
+
+                    when 4 =>
+                        s_sri_addr16 <= x"0001";
+                        s_state <= 5;
 
                     when others =>
                         s_sri_addr16 <= x"0000";
-                        null;        
+
                 end case;
             end if;
         end if;

@@ -50,6 +50,7 @@ architecture Behavioral of Fifo is
     signal s_full : std_logic := '0';
     signal s_read_ptr : std_logic_vector(p_addr_width-1 downto 0);
     signal s_write_ptr : std_logic_vector(p_addr_width-1 downto 0);
+    signal s_read_ahead_ptr : std_logic_vector(p_addr_width-1 downto 0);
     signal s_next_read_ptr : std_logic_vector(p_addr_width-1 downto 0);
     signal s_next_write_ptr : std_logic_vector(p_addr_width-1 downto 0);
     signal s_overflow : std_logic := '0';
@@ -72,8 +73,7 @@ begin
     -- Other ptrs
     s_next_read_ptr <= std_logic_vector(unsigned(s_read_ptr) + 1);
     s_next_write_ptr <= std_logic_vector(unsigned(s_write_ptr) + 1);
---    s_read_ptr <= s_read_ext_ptr(p_addr_width-1 downto 0) when i_read = '0' else s_next_read_ext_ptr(p_addr_width-1 downto 0);
---    s_write_ptr <= s_write_ext_ptr(p_addr_width-1 downto 0);
+    s_read_ahead_ptr <= s_read_ptr when i_read = '0' else s_next_read_ptr;
 
     ram_access : process(i_clock)
     begin
@@ -83,7 +83,7 @@ begin
                 ram(to_integer(unsigned(s_write_ptr))) := i_data;
             end if;
 
-            o_data <= ram(to_integer(unsigned(s_read_ptr)));
+            o_data <= ram(to_integer(unsigned(s_read_ahead_ptr)));
 
         end if;
     end process;

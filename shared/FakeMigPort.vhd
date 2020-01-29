@@ -50,6 +50,7 @@ architecture Behavioral of FakeMigPort is
 
     -- Command
     constant c_cmdfifo_width : integer := mig_port_cmd_byte_addr'length + mig_port_cmd_bl'length + mig_port_cmd_instr'length;
+    signal s_cmdfifo_wr : std_logic;
     signal s_cmdfifo_rd : std_logic;
     signal s_cmdfifo_din : std_logic_vector(c_cmdfifo_width-1 downto 0);
     signal s_cmdfifo_dout : std_logic_vector(c_cmdfifo_width-1 downto 0);
@@ -57,6 +58,7 @@ architecture Behavioral of FakeMigPort is
 
     -- Write
     constant c_wrfifo_width : integer := mig_port_wr_mask'length + mig_port_wr_data'length;
+    signal s_wrfifo_wr : std_logic;
     signal s_wrfifo_rd : std_logic;
     signal s_wrfifo_din : std_logic_vector(c_wrfifo_width-1 downto 0);
     signal s_wrfifo_dout : std_logic_vector(c_wrfifo_width-1 downto 0);
@@ -71,7 +73,7 @@ architecture Behavioral of FakeMigPort is
     constant c_ram_size : integer := 2 ** 20;
     constant c_bit_width : integer := mig_port_wr_data'length;
 	type mem_type is array(0 to c_ram_size-1) of std_logic_vector(31 downto 0);
-	shared variable ram : mem_type;
+	shared variable ram : mem_type := (others => x"cccccccc" );
 
     -- Executor
     signal s_state : integer range 0 to 100;
@@ -107,6 +109,7 @@ begin
 
     -- Command port
     s_cmdfifo_din <= mig_port_cmd_byte_addr & mig_port_cmd_bl & mig_port_cmd_instr;
+    s_cmdfifo_wr <= mig_port_cmd_en;
 
     mig_port_cmd_empty <= s_cmdfifo_empty;
     cmd_fifo : entity work.Fifo
@@ -120,7 +123,7 @@ begin
         i_clock => mig_port_cmd_clk,
         i_clken => s_calib_done,                -- disable until calibration done
         i_reset => i_reset,
-        i_write => mig_port_cmd_en,
+        i_write => s_cmdfifo_wr,
         i_data => s_cmdfifo_din,
         i_read => s_cmdfifo_rd,
         o_data => s_cmdfifo_dout,
@@ -134,6 +137,7 @@ begin
     -- Write Port
     mig_port_wr_error <= '0';
     s_wrfifo_din <= mig_port_wr_mask & mig_port_wr_data;
+    s_wrfifo_wr <= mig_port_wr_en;
     mig_port_wr_empty <= s_wrfifo_empty;
     wr_fifo : entity work.Fifo
     generic map
@@ -146,7 +150,7 @@ begin
         i_clock => mig_port_cmd_clk,
         i_clken => s_calib_done,                -- disable until calibration done
         i_reset => i_reset,
-        i_write => mig_port_wr_en,
+        i_write => s_wrfifo_wr,
         i_data => s_wrfifo_din,
         i_read => s_wrfifo_rd,
         o_data => s_wrfifo_dout,

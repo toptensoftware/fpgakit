@@ -1,20 +1,20 @@
 [*]
-[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
-[*] Tue Jan 28 13:21:23 2020
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Tue Jan 28 23:35:16 2020
 [*]
-[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/12-fifo/build/out.vcd"
-[dumpfile_mtime] "Tue Jan 28 13:20:49 2020"
-[dumpfile_size] 23988
-[savefile] "/home/brad/Projects/big80/fpgakit/sims/12-fifo/gtkwave_config.gtkw"
+[dumpfile] "/home/brad/Projects/fpgakit/sims/12-fifo/build/out.vcd"
+[dumpfile_mtime] "Tue Jan 28 23:32:58 2020"
+[dumpfile_size] 23724
+[savefile] "/home/brad/Projects/fpgakit/sims/12-fifo/gtkwave_config.gtkw"
 [timestart] 0
-[size] 1280 751
-[pos] -1 -1
-*-32.287598 300000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[size] 1920 1023
+[pos] -1 -272
+*-32.287598 11420000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [sst_width] 196
 [signals_width] 274
 [sst_expanded] 1
-[sst_vpaned_height] 208
+[sst_vpaned_height] 304
 @28
 testbench.s_clock
 testbench.s_clken
@@ -24,7 +24,7 @@ testbench.s_reset
 -Input
 @28
 testbench.uut.i_write
-@23
+@22
 testbench.uut.i_data[7:0]
 @200
 -
@@ -36,8 +36,9 @@ testbench.uut.o_data[7:0]
 @200
 -
 -State
-@28
+@29
 testbench.uut.o_empty
+@28
 testbench.uut.o_full
 testbench.uut.o_overflow
 testbench.uut.o_underflow
