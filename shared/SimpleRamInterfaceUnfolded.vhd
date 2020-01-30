@@ -206,7 +206,7 @@ begin
 					when state_wait_read =>
 						if mig_port_rd_empty = '0' then
                             s_current_word <= mig_port_rd_data;
-                            s_current_addr <= i_addr(29 downto 2) & "00";
+                            s_current_addr <= i_addr;
                             s_have_current_word <= '1';
 							mig_port_rd_en <= '1';
 							s_state <= state_idle;
