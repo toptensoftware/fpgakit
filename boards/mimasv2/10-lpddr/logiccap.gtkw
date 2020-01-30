@@ -1,0 +1,88 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Mon Jan 27 21:50:01 2020
+[*]
+[dumpfile] "/home/brad/Projects/big80/fpgakit/boards/mimasv2/10-lpddr/logiccap.vcd"
+[dumpfile_mtime] "Sun Jan 26 21:28:41 2020"
+[dumpfile_size] 25733
+[savefile] "/home/brad/Projects/big80/fpgakit/boards/mimasv2/10-lpddr/logiccap.gtkw"
+[timestart] 0
+[size] 1280 751
+[pos] -279 -151
+*-28.273878 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[sst_width] 196
+[signals_width] 254
+[sst_expanded] 1
+[sst_vpaned_height] 208
+@22
+signals.mig_port_cmd_bl[5:0]
+signals.mig_port_cmd_byte_addr[29:0]
+@28
+signals.mig_port_cmd_empty
+signals.mig_port_cmd_en
+signals.mig_port_cmd_full
+signals.mig_port_cmd_instr[2:0]
+@200
+-
+@22
+signals.mig_port_rd_count[6:0]
+signals.mig_port_rd_data[31:0]
+@29
+signals.mig_port_rd_empty
+@28
+signals.mig_port_rd_en
+signals.mig_port_rd_error
+signals.mig_port_rd_full
+signals.mig_port_rd_overflow
+@200
+-
+@22
+signals.mig_port_wr_count[6:0]
+@c00022
+signals.mig_port_wr_data[31:0]
+@28
+(0)signals.mig_port_wr_data[31:0]
+(1)signals.mig_port_wr_data[31:0]
+(2)signals.mig_port_wr_data[31:0]
+(3)signals.mig_port_wr_data[31:0]
+(4)signals.mig_port_wr_data[31:0]
+(5)signals.mig_port_wr_data[31:0]
+(6)signals.mig_port_wr_data[31:0]
+(7)signals.mig_port_wr_data[31:0]
+(8)signals.mig_port_wr_data[31:0]
+(9)signals.mig_port_wr_data[31:0]
+(10)signals.mig_port_wr_data[31:0]
+(11)signals.mig_port_wr_data[31:0]
+(12)signals.mig_port_wr_data[31:0]
+(13)signals.mig_port_wr_data[31:0]
+(14)signals.mig_port_wr_data[31:0]
+(15)signals.mig_port_wr_data[31:0]
+(16)signals.mig_port_wr_data[31:0]
+(17)signals.mig_port_wr_data[31:0]
+(18)signals.mig_port_wr_data[31:0]
+(19)signals.mig_port_wr_data[31:0]
+(20)signals.mig_port_wr_data[31:0]
+(21)signals.mig_port_wr_data[31:0]
+(22)signals.mig_port_wr_data[31:0]
+(23)signals.mig_port_wr_data[31:0]
+(24)signals.mig_port_wr_data[31:0]
+(25)signals.mig_port_wr_data[31:0]
+(26)signals.mig_port_wr_data[31:0]
+(27)signals.mig_port_wr_data[31:0]
+(28)signals.mig_port_wr_data[31:0]
+(29)signals.mig_port_wr_data[31:0]
+(30)signals.mig_port_wr_data[31:0]
+(31)signals.mig_port_wr_data[31:0]
+@1401200
+-group_end
+@28
+signals.mig_port_wr_empty
+signals.mig_port_wr_en
+signals.mig_port_wr_error
+signals.mig_port_wr_full
+@22
+signals.mig_port_wr_mask[3:0]
+@28
+signals.mig_port_wr_underrun
+[pattern_trace] 1
+[pattern_trace] 0

@@ -1,0 +1,79 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Wed Jan 29 01:58:14 2020
+[*]
+[dumpfile] "/home/brad/Projects/fpgakit/sims/14-simple-ram-interface/build/out.vcd"
+[dumpfile_mtime] "Wed Jan 29 01:57:18 2020"
+[dumpfile_size] 154852
+[savefile] "/home/brad/Projects/fpgakit/sims/14-simple-ram-interface/gtkwave_config.gtkw"
+[timestart] 17930000000
+[size] 1920 1151
+[pos] -1 -1
+*-30.834126 22200000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.mig.
+[sst_width] 236
+[signals_width] 331
+[sst_expanded] 1
+[sst_vpaned_height] 348
+@28
+testbench.mig.mig_port_calib_done
+@200
+-
+@28
+testbench.sri.i_clock
+testbench.sri.i_clken
+testbench.sri.i_reset
+testbench.sri.i_cs
+testbench.sri.i_wr
+@22
+testbench.sri.i_addr[29:0]
+testbench.sri.i_data[7:0]
+@23
+testbench.sri.o_data[7:0]
+@28
+testbench.sri.o_wait
+@200
+-
+@420
+testbench.mig.s_state
+@200
+-
+-Command
+@22
+testbench.mig.mig_port_cmd_bl[5:0]
+testbench.mig.mig_port_cmd_byte_addr[29:0]
+@28
+testbench.mig.mig_port_cmd_empty
+testbench.mig.mig_port_cmd_en
+testbench.mig.mig_port_cmd_full
+testbench.mig.mig_port_cmd_instr[2:0]
+@200
+-
+-Read
+@22
+testbench.mig.mig_port_rd_count[6:0]
+testbench.mig.mig_port_rd_data[31:0]
+@28
+testbench.mig.mig_port_rd_empty
+testbench.mig.mig_port_rd_en
+testbench.mig.mig_port_rd_error
+testbench.mig.mig_port_rd_full
+testbench.mig.mig_port_rd_overflow
+@200
+-
+-Write
+@22
+testbench.mig.mig_port_wr_count[6:0]
+testbench.mig.mig_port_wr_data[31:0]
+@28
+testbench.mig.mig_port_wr_empty
+testbench.mig.mig_port_wr_en
+testbench.mig.mig_port_wr_error
+testbench.mig.mig_port_wr_full
+@22
+testbench.mig.mig_port_wr_mask[3:0]
+@28
+testbench.mig.mig_port_wr_underrun
+[pattern_trace] 1
+[pattern_trace] 0

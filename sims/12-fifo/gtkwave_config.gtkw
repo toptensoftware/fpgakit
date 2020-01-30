@@ -1,0 +1,49 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Tue Jan 28 23:35:16 2020
+[*]
+[dumpfile] "/home/brad/Projects/fpgakit/sims/12-fifo/build/out.vcd"
+[dumpfile_mtime] "Tue Jan 28 23:32:58 2020"
+[dumpfile_size] 23724
+[savefile] "/home/brad/Projects/fpgakit/sims/12-fifo/gtkwave_config.gtkw"
+[timestart] 0
+[size] 1920 1023
+[pos] -1 -272
+*-32.287598 11420000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[sst_width] 196
+[signals_width] 274
+[sst_expanded] 1
+[sst_vpaned_height] 304
+@28
+testbench.s_clock
+testbench.s_clken
+testbench.s_reset
+@200
+-
+-Input
+@28
+testbench.uut.i_write
+@22
+testbench.uut.i_data[7:0]
+@200
+-
+-Output
+@28
+testbench.uut.i_read
+@22
+testbench.uut.o_data[7:0]
+@200
+-
+-State
+@29
+testbench.uut.o_empty
+@28
+testbench.uut.o_full
+testbench.uut.o_overflow
+testbench.uut.o_underflow
+@200
+-
+-Internal
+[pattern_trace] 1
+[pattern_trace] 0

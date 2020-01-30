@@ -123,7 +123,6 @@ begin
 	s_reset <= (not i_button_b);
 
 	-- Debug
-	o_leds <= (others => '0');
 	s_seven_seg_value <= (others => '0');
 
 	-- Clock Buffer
@@ -245,6 +244,7 @@ begin
 				mig_port_wr_en <= '0';
 				mig_port_rd_en <= '0';
 				mig_port_cmd_en <= '0';
+				o_leds <= (others => '0');
 			else
 
 				mig_port_wr_en <= '0';	
@@ -277,10 +277,15 @@ begin
 
 					when 7 =>
 						if mig_port_rd_empty = '0' then
-							if mig_port_rd_data = x"a1a2a3a4" then
-								s_state <= 15;
+							mig_port_rd_en <= '1';
+							if mig_port_rd_data = mig_port_wr_data then
+								mig_port_cmd_byte_addr <= std_logic_vector(unsigned(mig_port_cmd_byte_addr) + 1);
+								mig_port_wr_data <= std_logic_vector(unsigned(mig_port_wr_data) + 1);
+								s_state <= 1;
+								o_leds(0) <= '1';
 							else
 								s_state <= 14;
+								o_leds(1) <= '1';
 							end if;
 						end if;
 

@@ -20,8 +20,8 @@ port
     i_reset : in std_logic;                 -- Reset (synchronous, active high)
 
     -- Simple read/write single byte interface
-    i_rd : in std_logic;
     i_wr : in std_logic;
+    i_cs : in std_logic;
     i_addr : in std_logic_vector(29 downto 0);
     i_data : in std_logic_vector(7 downto 0);
     o_data : out std_logic_vector(7 downto 0);
@@ -67,36 +67,59 @@ architecture Behavioral of SimpleRamInterfaceUnfolded is
 	);
 
 	signal s_state : sri_state := state_idle;
-    signal s_dout_byte_sel : std_logic_vector(7 downto 0);
+    signal s_current_word : std_logic_vector(31 downto 0);
+    signal s_current_addr : std_logic_vector(29 downto 0);
+    signal s_wr_mask : std_logic_vector(3 downto 0);
+    signal s_updated_current_word : std_logic_vector(31 downto 0);
+    signal s_updated_current_byte_0 : std_logic_vector(7 downto 0);
+    signal s_updated_current_byte_1 : std_logic_vector(7 downto 0);
+    signal s_updated_current_byte_2 : std_logic_vector(7 downto 0);
+    signal s_updated_current_byte_3 : std_logic_vector(7 downto 0);
+    signal s_is_current_word : std_logic;
+    signal s_have_current_word : std_logic;
 begin
 
     -- Generate wait signal
-	o_wait <= '0' when s_state = state_idle else '1';
+	o_wait <= '0' when s_state = state_idle and (s_is_current_word = '1' or i_cs = '0') else '1';
 
     -- MCB address is the byte address with lowest two bits removed
     mig_port_cmd_byte_addr <= i_addr(i_addr'high downto 2) & "00";
 
+    -- We only ever read/write one word
+	mig_port_cmd_bl <= "000000";  
+
+    -- Does the input address match the current address (excluding lowest two bits)
+    s_is_current_word <= '1' when s_current_addr(29 downto 2) = i_addr(29 downto 2) and s_have_current_word = '1' else '0';
+
     -- Write byte mapping
     mig_port_wr_data <= i_data & i_data & i_data & i_data;
-    mig_port_wr_mask <= 
+    mig_port_wr_mask <= s_wr_mask;
+    s_wr_mask <=
             "1110" when i_addr(1 downto 0) = "00" else
             "1101" when i_addr(1 downto 0) = "01" else
             "1011" when i_addr(1 downto 0) = "10" else
             "0111";
 
     -- Read byte mapping
-    s_dout_byte_sel <= 
-        mig_port_rd_data(7 downto 0) when i_addr(1 downto 0) = "00" else
-        mig_port_rd_data(15 downto 8) when i_addr(1 downto 0) = "01" else
-        mig_port_rd_data(23 downto 16) when i_addr(1 downto 0) = "10" else
-        mig_port_rd_data(31 downto 24);
+    o_data <= 
+        s_current_word(7 downto 0) when s_current_addr(1 downto 0) = "00" else
+        s_current_word(15 downto 8) when s_current_addr(1 downto 0) = "01" else
+        s_current_word(23 downto 16) when s_current_addr(1 downto 0) = "10" else
+        s_current_word(31 downto 24);
 
+    -- Work out the new current word value after a write operation
+    s_updated_current_byte_0 <= s_current_word(7 downto 0) when s_wr_mask(0) = '1' else i_data;
+    s_updated_current_byte_1 <= s_current_word(15 downto 8) when s_wr_mask(1) = '1' else i_data;
+    s_updated_current_byte_2 <= s_current_word(23 downto 16) when s_wr_mask(2) = '1' else i_data;
+    s_updated_current_byte_3 <= s_current_word(31 downto 24) when s_wr_mask(3) = '1' else i_data;
+    s_updated_current_word <= s_updated_current_byte_3 & s_updated_current_byte_2 & s_updated_current_byte_1 & s_updated_current_byte_0;
 
+    -- Forward clock signals
 	mig_port_cmd_clk <= i_clock;
-	mig_port_cmd_bl <= "000000";  -- 1x 32 bit word block length
 	mig_port_wr_clk <= i_clock;
 	mig_port_rd_clk <= i_clock;
 
+    -- Main process
 	sri : process(i_clock)
 	begin
 		if rising_edge(i_clock) then
@@ -105,17 +128,19 @@ begin
 				mig_port_wr_en <= '0';
 				mig_port_rd_en <= '0';
 				mig_port_cmd_en <= '0';
+                s_have_current_word <= '0';
+                s_current_addr <= (others => '0');
+                s_current_word <= (others => '0');
 			else
 
 				mig_port_wr_en <= '0';	
 				mig_port_rd_en <= '0';
 				mig_port_cmd_en <= '0';
 
-
 				case s_state is
 
 					when state_idle =>
-                        if i_clken = '1' then
+                        if i_clken = '1' and i_cs = '1' then
                             if i_wr = '1' then
 
                                 -- Start write operation
@@ -126,13 +151,20 @@ begin
                                     s_state <= state_write_when_ready;
                                 end if;
 
-                            elsif i_rd = '1' then
+                            elsif i_addr /= s_current_addr or s_have_current_word = '0' then
 
-                                -- Start read operation
+                                -- Start read operation (if necessary)
                                 if mig_port_cmd_full = '0' and mig_port_calib_done = '1' then
-                                    mig_port_cmd_instr <= "001";		-- read
-                                    mig_port_cmd_en <= '1';
-                                    s_state <= state_wait_read;
+                                    if s_is_current_word = '0' then
+                                        -- Read instruction
+                                        mig_port_cmd_instr <= "001";
+                                        mig_port_cmd_en <= '1';
+                                        s_state <= state_wait_read;
+                                    else
+                                        -- Different address in same word
+                                        s_current_addr <= i_addr;
+                                        s_state <= state_idle;
+                                    end if;
                                 else
                                     s_state <= state_read_when_ready;
                                 end if;
@@ -153,18 +185,29 @@ begin
 							mig_port_cmd_instr <= "000";		-- write
 							mig_port_cmd_en <= '1';
 							s_state <= state_idle;
+                            if s_is_current_word = '1' then
+                                s_current_word <= s_updated_current_word;
+                                s_current_addr <= i_addr;
+                            end if;
 						end if;
 
 					when state_read_when_ready =>
 						if mig_port_cmd_full = '0' and mig_port_calib_done = '1' then
-							mig_port_cmd_instr <= "001";		-- read
-							mig_port_cmd_en <= '1';
-							s_state <= state_wait_read;
+                            if s_is_current_word = '0' then
+                                mig_port_cmd_instr <= "001";		-- read
+                                mig_port_cmd_en <= '1';
+                                s_state <= state_wait_read;
+                            else
+                                s_current_addr <= i_addr;
+                                s_state <= state_idle;
+                            end if;
 						end if;
 
 					when state_wait_read =>
 						if mig_port_rd_empty = '0' then
-							o_data <= s_dout_byte_sel;
+                            s_current_word <= mig_port_rd_data;
+                            s_current_addr <= i_addr;
+                            s_have_current_word <= '1';
 							mig_port_rd_en <= '1';
 							s_state <= state_idle;
 						end if;
