@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------
 --
--- SimpleRamInterface
+-- SimpleRamInterface16
 --
 --
 -- Copyright (C) 2019 Topten Software.  All Rights Reserved.
@@ -12,7 +12,7 @@ use IEEE.std_logic_1164.ALL;
 use IEEE.numeric_std.all;
 use work.FunctionLib.all;
 
-entity SimpleRamInterface is
+entity SimpleRamInterface16 is
 generic
 (
     p_auto_read : boolean
@@ -27,6 +27,7 @@ port
     i_rd : in std_logic;
     i_wr : in std_logic;
     i_cs : in std_logic;
+    i_mask : in std_logic_vector(1 downto 0);
     i_addr : in std_logic_vector(29 downto 0);
     i_data : in std_logic_vector(7 downto 0);
     o_data : out std_logic_vector(7 downto 0);
@@ -36,9 +37,9 @@ port
     mig_xrx : in std_logic_vector(56 downto 0);
     mig_xtx : out std_logic_vector(80 downto 0)
 );
-end SimpleRamInterface;
+end SimpleRamInterface16;
 
-architecture Behavioral of SimpleRamInterface is
+architecture Behavioral of SimpleRamInterface16 is
     signal mig_port_calib_done                        : std_logic;
     signal mig_port_cmd_clk                           : std_logic;
     signal mig_port_cmd_en                            : std_logic;
@@ -66,7 +67,7 @@ architecture Behavioral of SimpleRamInterface is
     signal mig_port_rd_error                          : std_logic;
 begin
 
-sri : entity work.SimpleRamInterfaceUnfolded
+sri : entity work.SimpleRamInterface16Unfolded
 generic map
 (
     p_auto_read => p_auto_read
@@ -79,6 +80,7 @@ port map
     i_cs => i_cs,
     i_rd => i_rd,
     i_wr => i_wr,
+    i_mask => i_mask,
     i_addr => i_addr,
     i_data => i_data,
     o_data => o_data,

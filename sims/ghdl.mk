@@ -22,8 +22,8 @@ endif
 # Compile and Link
 $(EXE): $(INPUTFILES)
 	@mkdir -p $(BUILDDIR)
-	xilt ghdl-filter $(GHDL) -a --workdir=$(BUILDDIR) $(GHDLFLAGS) $(INPUTFILES)
-	xilt ghdl-filter $(GHDL) -m --workdir=$(BUILDDIR) -o $(EXE) $(TOPMODULE)
+	@xilt ghdl-filter $(GHDL) -a --workdir=$(BUILDDIR) $(GHDLFLAGS) $(INPUTFILES)
+	@xilt ghdl-filter $(GHDL) -m --workdir=$(BUILDDIR) -o $(EXE) $(TOPMODULE)
 	@echo
 	@echo "Finished."
 
@@ -33,15 +33,15 @@ $(BUILDDIR)/out.vcd: $(EXE)
 	@$(EXE) --vcd=$(BUILDDIR)/out.vcd $(SIMOPTS)
 	@echo ------------ End Simulation ------------
 
-# Run
-run: $(BUILDDIR)/out.vcd
+.PHONY: simulator view clean
+
+simulator: $(EXE)
 
 # View (ie launch gtkwave)
 view: run
 	$(GTKWAVE) $(BUILDDIR)/out.vcd --save=gtkwave_config.gtkw $(GTKWAVEOPTS)
 
-# Clean
+
 clean:
-	rm -rf build
-
-
+	@rm -rf build
+	@for p in $(CLEAN); do rm -rf $$p; done

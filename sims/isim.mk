@@ -1,24 +1,22 @@
 SOURCEFILES ?= *.vhd
 BUILDDIR ?= ./build
-GHDLFLAGS ?=
 XILT ?= xilt
-GHDL ?= ghdl
-INPUTFILES1 := $(shell $(XILT) scandeps $(SOURCEFILES) --deppath://shared )
-INPUTFILES ?= $(INPUTFILES1)
-TOPMODULE1 := $(shell $(GHDL) -f $(INPUTFILES) | awk '/entity (.*) \*\*/ {print $$2}')
-TOPMODULE ?= $(TOPMODULE1)
+INPUTFILES := $(shell $(XILT) scandeps $(SOURCEFILES) --deppath://shared )
+TOPMODULE ?= TestBench
 EXE = $(BUILDDIR)/$(TOPMODULE)-isim
 
-# Compile and Link
-$(EXE): $(INPUTFILES)
-	xilt buildsim --topmodule:$(TOPMODULE) $(INPUTFILES)
+.PHONY: simulator view clean
+
+simulator: $(EXE)
 
 # View (ie launch ISim)
 view: $(EXE)
 	@cd $(BUILDDIR); touch waves.wcfg; ./$(TOPMODULE)-isim -gui -view waves.wcfg
 
-# Clean
+# Build ISim simulator
+$(EXE): $(INPUTFILES)
+	@xilt buildsim --topmodule:$(TOPMODULE) $(INPUTFILES)
+
 clean:
-	rm -rf build
-
-
+	@rm -rf build
+	@for p in $(CLEAN); do rm -rf $$p; done

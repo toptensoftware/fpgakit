@@ -28,5 +28,6 @@ upload: $(BINFILE)
 clean:
 	@rm -rf $(BUILDDIR)
 	@rm -rf $(OUTDIR)
+	@for p in $(CLEAN); do rm -rf $$p; done
 
 	

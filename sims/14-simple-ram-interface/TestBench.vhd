@@ -111,11 +111,16 @@ begin
     );
 
     sri : entity work.SimpleRamInterfaceUnfolded
+    generic map
+    (
+        p_auto_read => true
+    )
     port map
     ( 
         i_clock => s_clock,
         i_clken => s_clken,
         i_reset => s_reset,
+        i_rd => '0',
         i_wr => s_sri_wr,
         i_cs => s_sri_cs,
         i_addr => s_sri_addr,

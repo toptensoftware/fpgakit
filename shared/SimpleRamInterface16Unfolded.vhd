@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------
 --
--- SimpleRamInterfaceUnfolded
+-- SimpleRamInterface16Unfolded
 --
 --
 -- Copyright (C) 2019 Topten Software.  All Rights Reserved.
@@ -12,7 +12,7 @@ use IEEE.std_logic_1164.ALL;
 use IEEE.numeric_std.all;
 use work.FunctionLib.all;
 
-entity SimpleRamInterfaceUnfolded is
+entity SimpleRamInterface16Unfolded is
 generic
 (
     p_auto_read : boolean
@@ -24,12 +24,13 @@ port
     i_reset : in std_logic;                 -- Reset (synchronous, active high)
 
     -- Simple read/write single byte interface
-    i_wr : in std_logic;
     i_rd : in std_logic;
+    i_wr : in std_logic;
     i_cs : in std_logic;
+    i_mask : in std_logic_vector(1 downto 0);
     i_addr : in std_logic_vector(29 downto 0);
-    i_data : in std_logic_vector(7 downto 0);
-    o_data : out std_logic_vector(7 downto 0);
+    i_data : in std_logic_vector(15 downto 0);
+    o_data : out std_logic_vector(15 downto 0);
     o_wait : out std_logic;
 
     -- MCB control signals
@@ -59,9 +60,9 @@ port
     mig_port_rd_overflow                       : in std_logic;
     mig_port_rd_error                          : in std_logic
 );
-end SimpleRamInterfaceUnfolded;
+end SimpleRamInterface16Unfolded;
 
-architecture Behavioral of SimpleRamInterfaceUnfolded is
+architecture Behavioral of SimpleRamInterface16Unfolded is
 	type sri_state is
 	(
 		state_idle,
@@ -98,26 +99,22 @@ begin
     s_is_current_word <= '1' when s_current_addr(29 downto 2) = i_addr(29 downto 2) and s_have_current_word = '1' else '0';
 
     -- Write byte mapping
-    mig_port_wr_data <= i_data & i_data & i_data & i_data;
+    mig_port_wr_data <= i_data & i_data;
     mig_port_wr_mask <= s_wr_mask;
     s_wr_mask <=
-            "1110" when i_addr(1 downto 0) = "00" else
-            "1101" when i_addr(1 downto 0) = "01" else
-            "1011" when i_addr(1 downto 0) = "10" else
-            "0111";
+            "11" & i_mask when i_addr(1 downto 0) = "00" else
+            i_mask & "11";
 
     -- Read byte mapping
     o_data <= 
-        s_current_word(7 downto 0) when s_current_addr(1 downto 0) = "00" else
-        s_current_word(15 downto 8) when s_current_addr(1 downto 0) = "01" else
-        s_current_word(23 downto 16) when s_current_addr(1 downto 0) = "10" else
-        s_current_word(31 downto 24);
+        s_current_word(15 downto 0) when s_current_addr(1 downto 0) = "00" else
+        s_current_word(31 downto 16);
 
     -- Work out the new current word value after a write operation
-    s_updated_current_byte_0 <= s_current_word(7 downto 0) when s_wr_mask(0) = '1' else i_data;
-    s_updated_current_byte_1 <= s_current_word(15 downto 8) when s_wr_mask(1) = '1' else i_data;
-    s_updated_current_byte_2 <= s_current_word(23 downto 16) when s_wr_mask(2) = '1' else i_data;
-    s_updated_current_byte_3 <= s_current_word(31 downto 24) when s_wr_mask(3) = '1' else i_data;
+    s_updated_current_byte_0 <= s_current_word(7 downto 0) when s_wr_mask(0) = '1' else i_data(7 downto 0);
+    s_updated_current_byte_1 <= s_current_word(15 downto 8) when s_wr_mask(1) = '1' else i_data(15 downto 8);
+    s_updated_current_byte_2 <= s_current_word(23 downto 16) when s_wr_mask(2) = '1' else i_data(7 downto 0);
+    s_updated_current_byte_3 <= s_current_word(31 downto 24) when s_wr_mask(3) = '1' else i_data(15 downto 8);
     s_updated_current_word <= s_updated_current_byte_3 & s_updated_current_byte_2 & s_updated_current_byte_1 & s_updated_current_byte_0;
 
     -- Forward clock signals

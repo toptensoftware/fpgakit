@@ -6,6 +6,9 @@ try
 let inFile;
 let outFile;
 let entityName;
+let addrWidth = 0;
+let dataWidth = 8;
+let bigEndian = false;
 
 for (let i=2; i<process.argv.length; i++)
 {
@@ -16,11 +19,6 @@ for (let i=2; i<process.argv.length; i++)
     {
         isSwitch = true;
         a = a.substring(2);
-    }
-    else if (a.startsWith("/"))
-    {
-        isSwitch = true;
-        a = a.substring(1);
     }
 
     if (isSwitch)
@@ -48,6 +46,20 @@ for (let i=2; i<process.argv.length; i++)
 
             case "entity":
                 entityName = parts[1];
+                break;
+
+            case "addrwidth":
+                addrWidth = parseInt(parts[1]);
+                break;
+
+            case "datawidth":
+                dataWidth = parseInt(parts[1]);
+                if (dataWidth != 8 && dataWidth != 16)
+                    throw new Error("Invalid data width - must be 8 or 16");
+                break;
+
+            case "bigendian":
+                bigEndian = true;
                 break;
 
             default:
@@ -87,17 +99,26 @@ if (!entityName)
     entityName = path.parse(outFile).name;
 }
 
+let step =  (dataWidth / 8);
 
 // Load data
 var data = fs.readFileSync(inFile);
 
 // Work out address width
-var addrWidth = parseInt(Math.log2(data.length));
-if (Math.pow(2, addrWidth) < data.length)
-    addrWidth++;
-var dataLength = Math.pow(2, addrWidth);
+if (addrWidth == 0)
+{
+    addrWidth = parseInt(Math.ceil(Math.log2(data.length / step)));
+    if (Math.pow(2, addrWidth) * step < data.length)
+        addrWidth++;
+}
+var dataWords = Math.pow(2, addrWidth);
+if (dataWords * step < data.length )
+{
+    throw new Error(`\nFAILED: Address width of ${addrWidth} can't hold ${data.length} bytes\n`);
+}
 
 var out = "";
+let comma = ",";
 
 out += "--\n";
 out += "--\n";
@@ -108,44 +129,53 @@ out += "";
 out += "library ieee;\n";
 out += "use ieee.std_logic_1164.ALL;\n";
 out += "use ieee.numeric_std.ALL;\n";
-out += "use std.textio.all;\n";
-out += "use ieee.std_logic_textio.all;\n";
 out += "\n";
 out += `entity ${entityName} is\n`;
 out += "port\n";
 out += "(\n";
-out += "	clock : in std_logic;\n";
-out += `	addr : in std_logic_vector(${addrWidth-1} downto 0);\n`;
-out += "	dout : out std_logic_vector(7 downto 0)\n";
+out += "	i_clock : in std_logic;\n";
+out += `	i_addr : in std_logic_vector(${addrWidth-1} downto 0);\n`;
+out += `	o_dout : out std_logic_vector(${dataWidth-1} downto 0)\n`;
 out += ");\n";
 out += `end ${entityName};\n`;
 out += "\n";
 out += `--xilt:nowarn:Signal 'ram', unconnected in block '${entityName}', is tied to its initial value.\n`;
 out += "\n";
 out += `architecture behavior of ${entityName} is\n`;
-out += `	type mem_type is array(0 to ${dataLength-1}) of std_logic_vector(7 downto 0);\n`;
+out += `	type mem_type is array(0 to ${dataWords-1}) of std_logic_vector(${dataWidth-1} downto 0);\n`;
 out += "	signal ram : mem_type := (\n";
 
-let comma = ",";
-for (let i=0; i<dataLength; i++)
+for (let i=0; i<dataWords; i++)
 {
-    if (i == dataLength -1)
+    if (i == dataWords-1)
         comma ="";
     if ((i % 16) ==0)
         out += "\n\t";
     else
         out += " ";
 
-    var byte = i<data.length ? data[i] : 0;
-    out += "x\"" + byte.toString(16).padStart(2, "0") + "\"" + comma;
+    if (step == 1)
+    {
+        var byte = i< dataWords ? data[i] : 0;
+        out += "x\"" + byte.toString(16).padStart(2, "0") + "\"" + comma;
+    }
+    else if (step == 2)
+    {
+        let ih = bigEndian ? i*2 : i*2 + 1;
+        let il = bigEndian ? i*2 + 1 : i*2;
+        var byteL = il < data.length ? data[il] : 0;
+        var byteH = ih < data.length ? data[ih] : 0;
+
+        out += "x\"" + (byteH << 8 | byteL).toString(16).padStart(4, "0") + "\"" + comma;
+    }
 }
 
 out += ");\n";
 out += "begin\n";
-out += "	process (clock)\n";
+out += "	process (i_clock)\n";
 out += "	begin\n";
-out += "		if rising_edge(clock) then\n";
-out += "			dout <= ram(to_integer(unsigned(addr)));\n";
+out += "		if rising_edge(i_clock) then\n";
+out += "			o_dout <= ram(to_integer(unsigned(i_addr)));\n";
 out += "		end if;\n";
 out += "	end process;\n";
 out += "end;\n";
@@ -155,6 +185,7 @@ fs.writeFileSync(outFile, out, "utf8");
 catch (err)
 {
     console.error(err.message);
+    process.exit(7);
 }
 
 
@@ -166,4 +197,8 @@ function showHelp()
     console.log(" --entityName:<name>  name of the VHDL entity to generate");
     console.log("                         (defaults to outfile name)");
     console.log(" --help               show this help");
+    console.log(" --entity:<name>      name of generated entity");
+    console.log(" --addrWidth:<width>  address width");
+    console.log(" --dataWidth:<width>  bit data width (8 or 16)");
+    console.log(" --bigendian          use big endian encoding");
 }
