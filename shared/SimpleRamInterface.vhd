@@ -24,7 +24,6 @@ port
     i_reset : in std_logic;                 -- Reset (synchronous, active high)
 
     -- Simple read/write single byte interface
-    i_rd : in std_logic;
     i_wr : in std_logic;
     i_cs : in std_logic;
     i_addr : in std_logic_vector(29 downto 0);
