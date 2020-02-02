@@ -156,7 +156,7 @@ for (let i=0; i<dataWords; i++)
 
     if (step == 1)
     {
-        var byte = i< dataWords ? data[i] : 0;
+        var byte = i < data.length ? data[i] : 0;
         out += "x\"" + byte.toString(16).padStart(2, "0") + "\"" + comma;
     }
     else if (step == 2)
