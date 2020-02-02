@@ -1,3 +1,0 @@
-[submodule "shared/moxie-cores"]
-	path = shared/moxie-cores
-	url = https://github.com/toptensoftware/moxie-cores.git
