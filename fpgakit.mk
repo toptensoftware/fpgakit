@@ -15,6 +15,7 @@ PROJECTNAME ?= $(notdir $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))
 BUILDDIR ?= ./build
 OUTDIR ?= $(BUILDDIR)
 DEPPATH += $(FPGAKIT)/shared ./coregen
+OTHERSOURCEFILES ?= 
 
 # ------------------------- Clean  -------------------------
 
@@ -41,7 +42,7 @@ TARGETBOARD ?=
 # Scan for dependencies
 BITSOURCEFILES = $(shell $(XILT) scandeps $(BITTOP).vhd $(addprefix --deppath:,$(DEPPATH)))
 
-$(BITFILE): $(BITSOURCEFILES) $(UCFFILE) $(FPGAKIT)/shared/SuppressBenignWarnings.vhd
+$(BITFILE): $(BITSOURCEFILES) $(UCFFILE) $(OTHERSOURCEFILES) $(FPGAKIT)/shared/SuppressBenignWarnings.vhd
 	$(XILT) build \
 	--projectName:$(PROJECTNAME) \
 	--intDir:$(BUILDDIR) \
@@ -76,8 +77,8 @@ ISIMSOURCEFILES = $(shell $(XILT) scandeps $(ISIMTOP).vhd $(addprefix --deppath:
 build-isim: $(ISIMSIMEXE)
 
 # Build ISim simulator
-$(ISIMSIMEXE): $(ISIMSOURCEFILES)
-	@xilt buildsim --topmodule:$(ISIMTOP) $^
+$(ISIMSIMEXE): $(ISIMSOURCEFILES) $(OTHERSOURCEFILES)
+	@$(XILT) buildsim --messageFormat:msCompile --topmodule:$(ISIMTOP) $^
 
 # ------------------------- Run ISIM -------------------------
 
@@ -100,7 +101,7 @@ GHDLSOURCEFILES = $(shell $(XILT) scandeps $(GHDLTOP).vhd $(addprefix --deppath:
 build-ghdl: $(GHDLSIMEXE)
 
 # Compile and Link
-$(GHDLSIMEXE): $(GHDLSOURCEFILES)
+$(GHDLSIMEXE): $(GHDLSOURCEFILES)  $(OTHERSOURCEFILES)
 	@mkdir -p $(BUILDDIR)
 	@$(XILT) ghdl-filter $(GHDL) -a --workdir=$(BUILDDIR) $(GHDLFLAGS) $^
 	@$(XILT) ghdl-filter $(GHDL) -m --workdir=$(BUILDDIR) -o $(GHDLSIMEXE) $(GHDLTOP)
