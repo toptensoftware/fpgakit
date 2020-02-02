@@ -25,6 +25,7 @@ port
 
     -- Simple read/write single byte interface
     i_wr : in std_logic;
+    i_rd : in std_logic;
     i_cs : in std_logic;
     i_addr : in std_logic_vector(29 downto 0);
     i_data : in std_logic_vector(7 downto 0);

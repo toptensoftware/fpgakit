@@ -1,4 +1,9 @@
-SIMOPTS = --stop-time=2ms
+GHDLSIMOPTS = --stop-time=100us
+SIM=ghdl
 
-include ../ghdl.mk
+build: build-$(SIM)
 
+view: view-$(SIM)
+
+# Make script
+include ../../fpgakit.mk

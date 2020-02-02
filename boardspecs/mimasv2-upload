@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# Mimas board requires the .bin file, not the .bit file
+binpath=${1%/*}
+binfile=$(basename "$1" .bit).bin
+shift
+
+# Call programmer
+mimasv2-prog --filename $binpath/$binfile $*

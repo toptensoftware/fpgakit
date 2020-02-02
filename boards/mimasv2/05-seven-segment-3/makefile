@@ -1,2 +1,8 @@
+TARGETBOARD = mimasv2
+
+build: build-bit
+
+upload: upload-bit
+
 # Make script
-include ../mimasv2.mk
+include ../../../fpgakit.mk
