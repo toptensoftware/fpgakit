@@ -28,11 +28,11 @@ port
 
     -- Input
     i_write : in std_logic;
-    i_data : in std_logic_vector(p_bit_width-1 downto 0);
+    i_din : in std_logic_vector(p_bit_width-1 downto 0);
 
     -- Output
     i_read : in std_logic;
-    o_data : out std_logic_vector(p_bit_width-1 downto 0);
+    o_dout : out std_logic_vector(p_bit_width-1 downto 0);
 
     -- State
     o_full : out std_logic;
@@ -80,10 +80,10 @@ begin
         if rising_edge(i_clock) and i_clken = '1' then
 
             if i_write = '1' and s_full = '0' then
-                ram(to_integer(unsigned(s_write_ptr))) := i_data;
+                ram(to_integer(unsigned(s_write_ptr))) := i_din;
             end if;
 
-            o_data <= ram(to_integer(unsigned(s_read_ahead_ptr)));
+            o_dout <= ram(to_integer(unsigned(s_read_ahead_ptr)));
 
         end if;
     end process;
