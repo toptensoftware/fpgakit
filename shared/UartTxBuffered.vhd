@@ -40,7 +40,7 @@ port
     o_empty : out std_logic;
     o_underflow : out std_logic;
     o_overflow : out std_logic;
-    o_count : out std_logic_vector(p_addr_width downto 0)
+    o_count : out std_logic_vector(p_addr_width-1 downto 0)
 );
 end UartTxBuffered;
 
