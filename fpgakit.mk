@@ -43,7 +43,7 @@ TARGETBOARD ?=
 BITSOURCEFILES = $(shell $(XILT) scandeps $(BITTOP).vhd $(addprefix --deppath:,$(DEPPATH)))
 
 $(BITFILE): $(BITSOURCEFILES) $(UCFFILE) $(OTHERSOURCEFILES) $(FPGAKIT)/shared/SuppressBenignWarnings.vhd
-	$(XILT) build \
+	@$(XILT) build \
 	--projectName:$(PROJECTNAME) \
 	--intDir:$(BUILDDIR) \
 	--outDir:$(OUTDIR) \

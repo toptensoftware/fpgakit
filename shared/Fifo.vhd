@@ -16,7 +16,7 @@ use work.FunctionLib.all;
 entity Fifo is
 generic
 (
-    p_bit_width : integer;                      -- Bit width of bits to be reflected
+    p_bit_width : integer;                      -- Bit width of bits to be stored
     p_addr_width : integer                      -- Fifo size
 );
 port 
@@ -39,7 +39,7 @@ port
     o_empty : out std_logic;
     o_underflow : out std_logic;
     o_overflow : out std_logic;
-    o_count : out std_logic_vector(p_addr_width downto 0)
+    o_count : out std_logic_vector(p_addr_width-1 downto 0)
 );
 end Fifo;
 
@@ -68,7 +68,7 @@ begin
     o_full <= s_full;
     o_underflow <= s_underflow;
     o_overflow <= s_overflow;
-    o_count <= '0' & std_logic_vector(unsigned(s_write_ptr) - unsigned(s_read_ptr));
+    o_count <= std_logic_vector(unsigned(s_write_ptr) - unsigned(s_read_ptr));
 
     -- Other ptrs
     s_next_read_ptr <= std_logic_vector(unsigned(s_read_ptr) + 1);
@@ -77,9 +77,9 @@ begin
 
     ram_access : process(i_clock)
     begin
-        if rising_edge(i_clock) and i_clken = '1' then
+        if rising_edge(i_clock) then
 
-            if i_write = '1' and s_full = '0' then
+            if i_write = '1' and s_full = '0' and i_clken = '1' then
                 ram(to_integer(unsigned(s_write_ptr))) := i_din;
             end if;
 

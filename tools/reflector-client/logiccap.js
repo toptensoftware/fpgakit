@@ -2,6 +2,7 @@ let SerialPort = require('serialport');
 let BitPacket = require('./BitPacket');
 let VcdFileWriter = require('./VcdFileWriter');
 var spawn = require('child_process').spawn;
+let fs = require('fs');
 
 // Default options
 let options = {
@@ -221,12 +222,18 @@ function writeVcdFile()
 
     w.closeHeaders();
 
+    // Open the file
+//    let fdDump = fs.openSync("dump.txt", "w");
+
     // Process all packets
     for (let i=0; i<buffers.length; i++)
     {
         w.setTime(fsPerSample * BigInt(i+1));
 
         bp._buffer = buffers[i];
+
+//        fs.writeSync(fdDump, `${i} - ${bp.bits}\n`, "utf8");
+        
 
         // Write signals
         for (let j=0; j<options.fields.length; j++)
@@ -239,6 +246,8 @@ function writeVcdFile()
                 w.setSignal(f.signal, "b" + bp.getBits(f.from, f.to));
         }
     }
+
+    //fs.closeSync(fdDump);
 
     w.setTime(buffers.length + 1);
     w.close();
