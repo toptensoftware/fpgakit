@@ -1,0 +1,30 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Tue Feb  4 21:02:28 2020
+[*]
+[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/17-uart-rx-buffered/build/ghdl-out.vcd"
+[dumpfile_mtime] "Tue Feb  4 21:02:12 2020"
+[dumpfile_size] 18541384
+[savefile] "/home/brad/Projects/big80/fpgakit/sims/17-uart-rx-buffered/gtkwave_config.gtkw"
+[timestart] 0
+[size] 1280 646
+[pos] -1 -1
+*-38.145927 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[treeopen] testbench.uart.
+[sst_width] 196
+[signals_width] 215
+[sst_expanded] 1
+[sst_vpaned_height] 208
+@28
+testbench.s_uart_traffic_tx
+testbench.s_uart_empty
+testbench.s_uart_read
+@25
+testbench.uart.o_count[2:0]
+@28
+testbench.s_clken_reader
+@22
+testbench.s_uart_dout[7:0]
+[pattern_trace] 1
+[pattern_trace] 0
