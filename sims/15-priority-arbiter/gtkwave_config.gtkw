@@ -1,0 +1,39 @@
+[*]
+[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
+[*] Tue Feb  4 04:17:22 2020
+[*]
+[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/15-priority-arbiter/build/ghdl-out.vcd"
+[dumpfile_mtime] "Tue Feb  4 04:15:56 2020"
+[dumpfile_size] 70885
+[savefile] "/home/brad/Projects/big80/fpgakit/sims/15-priority-arbiter/gtkwave_config.gtkw"
+[timestart] 0
+[size] 1280 751
+[pos] 538 -272
+*-34.931454 17900000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[sst_width] 196
+[signals_width] 274
+[sst_expanded] 1
+[sst_vpaned_height] 208
+@800022
+testbench.uut.i_request[3:0]
+@28
+(0)testbench.uut.i_request[3:0]
+(1)testbench.uut.i_request[3:0]
+@29
+(2)testbench.uut.i_request[3:0]
+@28
+(3)testbench.uut.i_request[3:0]
+@1001200
+-group_end
+@800022
+testbench.uut.s_granted[3:0]
+@28
+(0)testbench.uut.s_granted[3:0]
+(1)testbench.uut.s_granted[3:0]
+(2)testbench.uut.s_granted[3:0]
+(3)testbench.uut.s_granted[3:0]
+@1001200
+-group_end
+[pattern_trace] 1
+[pattern_trace] 0
