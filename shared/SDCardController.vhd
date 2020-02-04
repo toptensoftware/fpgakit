@@ -15,19 +15,19 @@
 --   * o_data_start will be raised for possibly multiple cycles to indicate
 --         data is about the be sent.  (ie: i_reset DMA address)
 --   * o_data_cycle will be raised exactly 512 times for one cycle
---         for each byte with the data on o_data.  Data will be available for 
+--         for each byte with the data on o_dout.  Data will be available for 
 --         multiple cycles (about 10)
 --   * wait for STATUS_BIT_BUSY to clear to indicate operation finished
 --
 -- Write
 --   * set i_op_block_number
 --   * set i_op_cmd to "10"
---   * provide first byte on i_data
+--   * provide first byte on i_din
 --   * set i_op_write to "1"
 --   * o_data_start will be raised for possibly multiple cycles to indicate
 --         data is about the needed.  (ie: i_reset DMA address)
 --   * o_data_cycle will be raised exactly 512 times.  Each time the next byte
---         should be supplied on i_data.  Data needs to be available before 
+--         should be supplied on i_din.  Data needs to be available before 
 --		   the next cycle 
 --   * wait for STATUS_BIT_BUSY to clear to indicate operation finished
 --
@@ -96,8 +96,8 @@ port
 	-- Data in/out
 	o_data_start : out std_logic;
 	o_data_cycle : out std_logic;
-	i_data : in std_logic_vector(7 downto 0);
-	o_data : out std_logic_vector(7 downto 0)
+	i_din : in std_logic_vector(7 downto 0);
+	o_dout : out std_logic_vector(7 downto 0)
 );
 end SDCardController;
 
@@ -196,7 +196,7 @@ begin
 		end if;
 	end process;
 
-	o_data <= rx_buf(7 downto 0);
+	o_dout <= rx_buf(7 downto 0);
 	o_data_cycle <= '1' when state = WRITE_DMA or din_used='1' else '0';
 
 
@@ -519,7 +519,7 @@ begin
 					else 	
 						-- Send data byte
 						bit_counter := 8;
-						tx_buf(55 downto 48) <= i_data;
+						tx_buf(55 downto 48) <= i_din;
 						state <= TX_DATA;
 						return_state <= WRITE_BLOCK_DATA;
 						byte_counter := byte_counter - 1;

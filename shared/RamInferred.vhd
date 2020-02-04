@@ -48,15 +48,12 @@ begin
 	process (i_clock)
 	begin
 		if rising_edge(i_clock) then
-			if i_clken = '1' then
 
-				if i_write = '1' then
-					ram(to_integer(unsigned(i_addr))) := s_wr_data;
-				end if;
-
-				o_data <= ram(to_integer(unsigned(i_addr)));
-
+			if i_clken = '1' and i_write = '1' then
+				ram(to_integer(unsigned(i_addr))) := s_wr_data;
 			end if;
+
+			o_data <= ram(to_integer(unsigned(i_addr)));
 		end if;
 	end process;
 
