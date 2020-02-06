@@ -72,16 +72,16 @@ begin
 		i_clock_a => i_clock,
 		i_clken_a => i_clken,
 		i_addr_a => s_addr_a,
-		i_data_a => i_signals,
-		o_data_a => open,
+		i_din_a => i_signals,
+		o_dout_a => open,
 		i_write_a => s_write_a,
 
         -- Port B serial sender
 		i_clock_b => i_clock,
 		i_clken_b => '1',
 		i_addr_b => s_addr_b,
-		i_data_b => (others => '0'),
-		o_data_b => s_dout_b,
+		i_din_b => (others => '0'),
+		o_dout_b => s_dout_b,
 		i_write_b => '0'
 	);
 

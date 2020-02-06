@@ -23,7 +23,6 @@ port
 ( 
     -- Control
     i_clock : in std_logic;                     -- Clock
-    i_clken : in std_logic;                     -- Clock Enable
     i_reset : in std_logic;                     -- Reset (synchronous, active high)
 
     -- Input
@@ -79,7 +78,7 @@ begin
     begin
         if rising_edge(i_clock) then
 
-            if i_write = '1' and s_full = '0' and i_clken = '1' then
+            if i_write = '1' and s_full = '0' then
                 ram(to_integer(unsigned(s_write_ptr))) := i_din;
             end if;
 
@@ -94,7 +93,7 @@ begin
             if i_reset = '1' then
                 s_overflow <= '0';
                 s_write_ptr <= (others => '0');
-            elsif i_clken = '1' then
+            else
                 if i_write = '1' then
                     if s_full = '1' then
                         s_overflow <= '1';
@@ -102,7 +101,6 @@ begin
                         s_write_ptr <= s_next_write_ptr;
                     end if;
                 end if;
-
             end if;
         end if;
     end process;
@@ -113,8 +111,7 @@ begin
             if i_reset = '1' then
                 s_underflow <= '0';
                 s_read_ptr <= (others => '0');
-            elsif i_clken = '1' then
-
+            else
                 if i_read = '1' then
                     if s_empty = '1' then
                         s_underflow <= '1';
@@ -122,7 +119,6 @@ begin
                         s_read_ptr <= s_next_read_ptr;
                     end if;
                 end if;
-
             end if;
         end if;
     end process;
