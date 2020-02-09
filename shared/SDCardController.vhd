@@ -407,11 +407,13 @@ begin
 						case i_op_cmd is
 
 							when "01" =>		-- read
+								o_status(2 downto 0) <= STATUS_LO_READING;
 								state <= SEND_CMD17;
 								s_block_number <= i_op_block_number;
 								o_data_start <= '1';
 
 							when "10" =>		-- write
+								o_status(2 downto 0) <= STATUS_LO_WRITING;
 								state <= SEND_CMD24;
 								s_block_number <= i_op_block_number;
 								o_data_start <= '1';
@@ -424,7 +426,6 @@ begin
 
 
 				when SEND_CMD17 =>
-					o_status(2 downto 0) <= STATUS_LO_READING;
 					tx_buf <= x"FF" & x"51" & cmd_address & x"FF";
 					state <= TX_CMD;
 					do_deselect <= '0';
@@ -489,7 +490,6 @@ begin
 					state <= READ_BLOCK_DATA;
 
 				when SEND_CMD24 =>
-					o_status(2 downto 0) <= STATUS_LO_WRITING;
 					byte_counter := 512; 
 					tx_buf <= x"FF" & x"58" & cmd_address & x"FF";	-- single block
 					state <= TX_CMD;

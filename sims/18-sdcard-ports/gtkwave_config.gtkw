@@ -1,0 +1,37 @@
+[*]
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Sat Feb  8 04:52:50 2020
+[*]
+[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/18-sdcard-ports/build/ghdl-out.vcd"
+[dumpfile_mtime] "Sat Feb  8 04:51:36 2020"
+[dumpfile_size] 6279157
+[savefile] "/home/brad/Projects/big80/fpgakit/sims/18-sdcard-ports/gtkwave_config.gtkw"
+[timestart] 0
+[size] 1278 646
+[pos] -1 -1
+*-25.190487 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] testbench.
+[sst_width] 196
+[signals_width] 238
+[sst_expanded] 1
+[sst_vpaned_height] 60
+@28
+testbench.uut.i_clock
+testbench.uut.i_reset
+@22
+testbench.uut.i_sd_din[7:0]
+testbench.uut.i_sd_op_block_number[31:0]
+@28
+testbench.uut.i_sd_op_cmd[1:0]
+testbench.uut.i_sd_op_write
+testbench.uut.o_sd_data_cycle
+testbench.uut.o_sd_data_start
+@22
+testbench.uut.o_sd_dout[7:0]
+@23
+testbench.uut.o_sd_status[7:0]
+@420
+testbench.uut.s_bufpos
+testbench.uut.s_delay
+[pattern_trace] 1
+[pattern_trace] 0
