@@ -9,6 +9,7 @@ let entityName;
 let addrWidth = 0;
 let dataWidth = 8;
 let bigEndian = false;
+let writeable = false;
 
 for (let i=2; i<process.argv.length; i++)
 {
@@ -60,6 +61,10 @@ for (let i=2; i<process.argv.length; i++)
 
             case "bigendian":
                 bigEndian = true;
+                break;
+
+            case "writeable":
+                writeable = true;
                 break;
 
             default:
@@ -135,6 +140,11 @@ out += "port\n";
 out += "(\n";
 out += "	i_clock : in std_logic;\n";
 out += `	i_addr : in std_logic_vector(${addrWidth-1} downto 0);\n`;
+if (writeable)
+{
+    out += `    i_write : in std_logic;\n`;
+    out += `	i_din : in std_logic_vector(${dataWidth-1} downto 0);\n`;
+}
 out += `	o_dout : out std_logic_vector(${dataWidth-1} downto 0)\n`;
 out += ");\n";
 out += `end ${entityName};\n`;
@@ -175,6 +185,12 @@ out += "begin\n";
 out += "	process (i_clock)\n";
 out += "	begin\n";
 out += "		if rising_edge(i_clock) then\n";
+if (writeable)
+{
+out += "            if i_write = '1' then\n";
+out += "                ram(to_integer(unsigned(i_addr))) <= i_din;\n";
+out += "            end if;\n";
+}
 out += "			o_dout <= ram(to_integer(unsigned(i_addr)));\n";
 out += "		end if;\n";
 out += "	end process;\n";
@@ -201,4 +217,5 @@ function showHelp()
     console.log(" --addrWidth:<width>  address width");
     console.log(" --dataWidth:<width>  bit data width (8 or 16)");
     console.log(" --bigendian          use big endian encoding");
+    console.log(" --writeable          make a writeable RAM");
 }
