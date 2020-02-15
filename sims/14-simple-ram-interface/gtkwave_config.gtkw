@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.3.98 (w)1999-2019 BSI
-[*] Wed Jan 29 01:58:14 2020
+[*] GTKWave Analyzer v3.3.86 (w)1999-2017 BSI
+[*] Sat Feb 15 05:47:28 2020
 [*]
-[dumpfile] "/home/brad/Projects/fpgakit/sims/14-simple-ram-interface/build/out.vcd"
-[dumpfile_mtime] "Wed Jan 29 01:57:18 2020"
-[dumpfile_size] 154852
-[savefile] "/home/brad/Projects/fpgakit/sims/14-simple-ram-interface/gtkwave_config.gtkw"
-[timestart] 17930000000
-[size] 1920 1151
+[dumpfile] "/home/brad/Projects/big80/fpgakit/sims/14-simple-ram-interface/build/ghdl-out.vcd"
+[dumpfile_mtime] "Sat Feb 15 05:46:52 2020"
+[dumpfile_size] 149379
+[savefile] "/home/brad/Projects/big80/fpgakit/sims/14-simple-ram-interface/gtkwave_config.gtkw"
+[timestart] 0
+[size] 1280 751
 [pos] -1 -1
-*-30.834126 22200000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-32.834126 0 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] testbench.
 [treeopen] testbench.mig.
 [sst_width] 236
@@ -18,6 +18,8 @@
 [sst_vpaned_height] 348
 @28
 testbench.mig.mig_port_calib_done
+@420
+testbench.mig.s_state
 @200
 -
 @28
@@ -25,19 +27,18 @@ testbench.sri.i_clock
 testbench.sri.i_clken
 testbench.sri.i_reset
 testbench.sri.i_cs
+@29
+testbench.sri.i_rd
+@28
 testbench.sri.i_wr
 @22
 testbench.sri.i_addr[29:0]
 testbench.sri.i_data[7:0]
-@23
 testbench.sri.o_data[7:0]
 @28
 testbench.sri.o_wait
 @200
 -
-@420
-testbench.mig.s_state
-@200
 -
 -Command
 @22

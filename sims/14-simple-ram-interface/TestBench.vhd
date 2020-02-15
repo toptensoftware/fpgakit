@@ -11,6 +11,7 @@ architecture behavior of TestBench is
     signal s_clken : std_logic := '0';
     signal s_reset : std_logic;
 
+    signal s_sri_rd : std_logic;
     signal s_sri_wr : std_logic;
     signal s_sri_cs : std_logic;
     signal s_sri_addr : std_logic_vector(29 downto 0);
@@ -111,16 +112,11 @@ begin
     );
 
     sri : entity work.SimpleRamInterfaceUnfolded
-    generic map
-    (
-        p_auto_read => true
-    )
     port map
     ( 
         i_clock => s_clock,
-        i_clken => s_clken,
         i_reset => s_reset,
-        i_rd => '0',
+        i_rd => s_sri_rd,
         i_wr => s_sri_wr,
         i_cs => s_sri_cs,
         i_addr => s_sri_addr,
@@ -161,43 +157,57 @@ begin
         if rising_edge(s_clock) then
             if s_reset = '1' then
                 s_sri_wr <= '0';
+                s_sri_rd <= '0';
                 s_sri_cs <= '1';
                 s_sri_addr16 <= (others => '0');
                 s_sri_din <= (others => '0');
                 s_state <= 0;
-            elsif (s_clken = '1') then
+            else
                 s_sri_wr <= '0';
-                case s_state is
+                s_sri_rd <= '0';
+                if (s_clken = '1') then
+                    case s_state is
 
-                    when 0 => 
-                        if s_sri_wait = '0' then
-									s_sri_wr <= '1';
-									s_sri_addr16 <= (others => '0');
-									s_sri_din <= x"A6";
-									s_state <= 1;
-								end if;
+                        when 0 => 
+                            if s_sri_wait = '0' then
+                                s_sri_addr16 <= x"0000";
+                                s_sri_din <= x"A6";
+                                s_sri_wr <= '1';
+                                s_state <= 1;
+                            end if;
 
-                    when 1 =>
-                        if s_sri_wait = '0' then
-                            s_state <= 2;
-                        end if;
+                        when 1 =>
+                            if s_sri_wait = '0' then
+                                s_state <= 2;
+                            end if;
 
-                    when 2 => 
-                        s_sri_addr16 <= x"0001";
-                        s_state <= 3;
+                        when 2 => 
+                            s_sri_addr16 <= x"0008";
+                            s_sri_rd <= '1';
+                            s_state <= 3;
 
-                    when 3 => 
-                        s_sri_addr16 <= x"0010";
-                        s_state <= 4;
+                        when 3 => 
+                            if s_sri_wait = '0' then
+                                s_state <= 4;
+                            end if;
 
-                    when 4 =>
-                        s_sri_addr16 <= x"0001";
-                        s_state <= 5;
+                        when 4 =>
+                            s_sri_addr16 <= x"0000";
+                            s_sri_rd <= '1';
+                            s_state <= 5;
 
-                    when others =>
-                        s_sri_addr16 <= x"0000";
+                        when 5 =>
+                            if s_sri_wait = '0' then
+                                s_state <= 6;
+                                s_sri_addr16 <= x"0001";
+                                s_sri_rd <= '1';
+                            end if;
 
-                end case;
+                        when others =>
+                            s_sri_addr16 <= x"0000";
+
+                    end case;
+                end if;
             end if;
         end if;
     end process;

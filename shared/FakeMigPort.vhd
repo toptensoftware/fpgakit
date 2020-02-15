@@ -47,6 +47,7 @@ architecture Behavioral of FakeMigPort is
     -- Calibration
     signal s_calib_done : std_logic := '0';
     signal s_calib_time : integer range 0 to 100 := 0;
+    signal s_fifo_reset : std_logic;
 
     -- Command
     constant c_cmdfifo_width : integer := mig_port_cmd_byte_addr'length + mig_port_cmd_bl'length + mig_port_cmd_instr'length;
@@ -107,12 +108,14 @@ begin
         end if;
     end process;
 
+    s_fifo_reset <= i_reset or not s_calib_done;
+
     -- Command port
     s_cmdfifo_din <= mig_port_cmd_byte_addr & mig_port_cmd_bl & mig_port_cmd_instr;
     s_cmdfifo_wr <= mig_port_cmd_en;
 
     mig_port_cmd_empty <= s_cmdfifo_empty;
-    cmd_fifo : entity work.Fifo
+    cmd_fifo : entity work.Fifo2
     generic map
     (
         p_bit_width => c_cmdfifo_width,
@@ -121,12 +124,11 @@ begin
     port map
     ( 
         i_clock => mig_port_cmd_clk,
-        i_clken => s_calib_done,                -- disable until calibration done
-        i_reset => i_reset,
+        i_reset => s_fifo_reset,
         i_write => s_cmdfifo_wr,
-        i_data => s_cmdfifo_din,
+        i_din => s_cmdfifo_din,
         i_read => s_cmdfifo_rd,
-        o_data => s_cmdfifo_dout,
+        o_dout => s_cmdfifo_dout,
         o_full => mig_port_cmd_full,
         o_empty => s_cmdfifo_empty,
         o_underflow => open,
@@ -139,7 +141,7 @@ begin
     s_wrfifo_din <= mig_port_wr_mask & mig_port_wr_data;
     s_wrfifo_wr <= mig_port_wr_en;
     mig_port_wr_empty <= s_wrfifo_empty;
-    wr_fifo : entity work.Fifo
+    wr_fifo : entity work.Fifo2
     generic map
     (
         p_bit_width => c_wrfifo_width,
@@ -148,12 +150,11 @@ begin
     port map
     ( 
         i_clock => mig_port_cmd_clk,
-        i_clken => s_calib_done,                -- disable until calibration done
-        i_reset => i_reset,
+        i_reset => s_fifo_reset,
         i_write => s_wrfifo_wr,
-        i_data => s_wrfifo_din,
+        i_din => s_wrfifo_din,
         i_read => s_wrfifo_rd,
-        o_data => s_wrfifo_dout,
+        o_dout => s_wrfifo_dout,
         o_full => mig_port_wr_full,
         o_empty => s_wrfifo_empty,
         o_underflow => mig_port_wr_underrun,
@@ -163,7 +164,7 @@ begin
 
     -- Read Port
     mig_port_rd_error <= '0';
-    rd_fifo : entity work.Fifo
+    rd_fifo : entity work.Fifo2
     generic map
     (
         p_bit_width => c_rdfifo_width,
@@ -172,12 +173,11 @@ begin
     port map
     ( 
         i_clock => mig_port_cmd_clk,
-        i_clken => s_calib_done,                -- disable until calibration done
-        i_reset => i_reset,
+        i_reset => s_fifo_reset,
         i_write => s_rdfifo_wr,
-        i_data => s_rdfifo_din,
+        i_din => s_rdfifo_din,
         i_read => mig_port_rd_en,
-        o_data => mig_port_rd_data,
+        o_dout => mig_port_rd_data,
         o_full => mig_port_rd_full,
         o_empty => mig_port_rd_empty,
         o_underflow => open,

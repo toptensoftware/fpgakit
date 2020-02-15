@@ -21,8 +21,6 @@ generic
 );
 port 
 (
-	o_uart_debug : out std_logic;
-
 	-- Clocking
 	i_reset : in std_logic;
 	i_clock : in std_logic;
@@ -60,8 +58,6 @@ port
 end SDCardControllerDualPort;
 
 architecture Behavioral of SDCardControllerDualPort is
-
-	signal s_logic_capture : std_logic_vector(48 downto 0);
 
 	signal s_sd_status : std_logic_vector(7 downto 0);
 	signal s_op_write : std_logic;
@@ -266,39 +262,6 @@ begin
 
 	s_din_b <= i_din_b;
 	o_dout_b <= s_dout_b;
-
-	s_logic_capture <= 
-		s_arb_request & 
-		s_arb_granted & 
-		s_sd_status & 
-		s_op_write & 
-		s_op_cmd & 
-		s_data_start & 
-		s_data_cycle & 
-		s_din & 
-		s_dout & 
-		s_din_b &
-		s_dout_b
-		;
-
-	cap : entity work.LogicCapture
-	generic map
-	(
-		p_clock_hz => 80_000_000,
-		p_baud => 115200,
-		p_bit_width => 49,
-		p_addr_width => 10
-	)
-	port map
-	( 
-		i_clock => i_clock,
-		i_clken => '1',
-		i_reset => i_reset,
-		i_trigger => s_data_start,
-		i_signals => s_logic_capture,
-		o_uart_tx => o_uart_debug
-	);
-
 
 end Behavioral;
 

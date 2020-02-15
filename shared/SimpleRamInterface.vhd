@@ -13,20 +13,14 @@ use IEEE.numeric_std.all;
 use work.FunctionLib.all;
 
 entity SimpleRamInterface is
-generic
-(
-    p_auto_read : boolean
-);
 port 
 ( 
     i_clock : in std_logic;                 -- Clock
-    i_clken : in std_logic;
     i_reset : in std_logic;                 -- Reset (synchronous, active high)
 
     -- Simple read/write single byte interface
     i_wr : in std_logic;
     i_rd : in std_logic;
-    i_cs : in std_logic;
     i_addr : in std_logic_vector(29 downto 0);
     i_data : in std_logic_vector(7 downto 0);
     o_data : out std_logic_vector(7 downto 0);
@@ -67,16 +61,10 @@ architecture Behavioral of SimpleRamInterface is
 begin
 
 sri : entity work.SimpleRamInterfaceUnfolded
-generic map
-(
-    p_auto_read => p_auto_read
-)
 port map
 ( 
     i_clock => i_clock,
-    i_clken => i_clken,
     i_reset => i_reset,
-    i_cs => i_cs,
     i_rd => i_rd,
     i_wr => i_wr,
     i_addr => i_addr,

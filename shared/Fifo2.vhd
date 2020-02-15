@@ -13,7 +13,7 @@ use IEEE.std_logic_1164.ALL;
 use IEEE.numeric_std.all;
 use work.FunctionLib.all;
 
-entity Fifo is
+entity Fifo2 is
 generic
 (
     p_bit_width : integer;                      -- Bit width of bits to be reflected
@@ -23,7 +23,6 @@ port
 ( 
     -- Control
     i_clock : in std_logic;                     -- Clock
-    i_clken : in std_logic;                     -- Clock Enable
     i_reset : in std_logic;                     -- Reset (synchronous, active high)
 
     -- Input
@@ -41,9 +40,9 @@ port
     o_overflow : out std_logic;
     o_count : out std_logic_vector(p_addr_width downto 0)
 );
-end Fifo;
+end Fifo2;
 
-architecture Behavioral of Fifo is
+architecture Behavioral of Fifo2 is
 
     constant c_length : integer := 2 ** p_addr_width;
     signal s_empty : std_logic := '0';
@@ -81,7 +80,7 @@ begin
 
     ram_access : process(i_clock)
     begin
-        if rising_edge(i_clock) and i_clken = '1' then
+        if rising_edge(i_clock)then
 
             if i_write = '1' and s_full = '0' then
                 ram(to_integer(unsigned(s_write_ptr))) := i_din;
@@ -98,7 +97,7 @@ begin
             if i_reset = '1' then
                 s_overflow <= '0';
                 s_write_ext_ptr <= (others => '0');
-            elsif i_clken = '1' then
+            else
                 if i_write = '1' then
                     if s_full = '1' then
                         s_overflow <= '1';
@@ -117,7 +116,7 @@ begin
             if i_reset = '1' then
                 s_underflow <= '0';
                 s_read_ext_ptr <= (others => '0');
-            elsif i_clken = '1' then
+            else
 
                 if i_read = '1' then
                     if s_empty = '1' then
