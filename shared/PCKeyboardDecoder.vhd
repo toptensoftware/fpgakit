@@ -28,8 +28,7 @@ port
     i_data_error : in std_logic;                        -- Assert if there was an error in the data
 
     -- Generated keyboard event
-    o_key_scancode : out std_logic_vector(6 downto 0);  -- Output scan code
-    o_key_extended : out std_logic;                     -- 0 for normal key, 1 for extended key
+    o_key_scancode : out std_logic_vector(7 downto 0);  -- Output scan code (extended flag in high bit)
     o_key_released : out std_logic;                     -- 0 if press, 1 if release
     o_key_available : out std_logic                     -- Asserted for one clock cycle on event
 );
@@ -37,6 +36,7 @@ end PCKeyboardDecoder;
 
 architecture Behavioral of PCKeyboardDecoder is
     signal s_key_available : std_logic;
+    signal s_key_extended : std_logic;
 begin
 
     -- Output the data available flag
@@ -48,7 +48,7 @@ begin
             if i_reset = '1' then
                 -- Reset
                 o_key_released <= '0';
-                o_key_extended <= '0';
+                s_key_extended <= '0';
                 s_key_available <= '0';
             else
                 -- Clear data available
@@ -58,7 +58,7 @@ begin
                 -- cycle, then reset the event flags
                 if s_key_available = '1' then
                     o_key_released <= '0';
-                    o_key_extended <= '0';
+                    s_key_extended <= '0';
                 end if;
 
                 -- Input data available?
@@ -66,24 +66,26 @@ begin
                     if i_data_error = '1' then
                         -- Error, reset the flags
                         o_key_released <= '0';
-                        o_key_extended <= '0';
+                        s_key_extended <= '0';
                     else
                         if i_data = x"F0" then
                             -- This is a key release event
                             o_key_released <= '1';
                         elsif i_data = x"E0" then
                             -- This is an extended key code
-                            o_key_extended <= '1';
-                        elsif i_data(7) = '0' then
-                            -- Scan codes are <= 127, generate
-                            -- the outgoing event
-                            o_key_scancode <= i_data(6 downto 0);
+                            s_key_extended <= '1';
+                        elsif i_data(7) = '0' or i_data = x"83" then
+                            -- Scan codes are <= 127, generate the outgoing event
+                            -- NB: 0x83 is special case for F7 key - the only key
+                            --     with scan code > 0x7f.  Luckily there's no
+                            --     extended key "E0 03" to clash with.
+                            o_key_scancode <= (s_key_extended or i_data(7)) & i_data(6 downto 0);
                             s_key_available <= '1';
                         else
                             -- Not sure what that was, reset for next
                             -- event                            
                             o_key_released <= '0';
-                            o_key_extended <= '0';
+                            s_key_extended <= '0';
                         end if;
                     end if;
                 end if;

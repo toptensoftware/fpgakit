@@ -70,7 +70,6 @@ begin
 	port map
 	( 
 		i_clock => i_clock_100mhz,
-		i_clken => '1',
 		i_reset => s_reset,
 		i_write => s_fifo_write,
 		i_din => s_fifo_din,

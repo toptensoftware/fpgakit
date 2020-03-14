@@ -13,7 +13,6 @@ architecture behavior of TestBench is
 
     signal s_sri_rd : std_logic;
     signal s_sri_wr : std_logic;
-    signal s_sri_cs : std_logic;
     signal s_sri_addr : std_logic_vector(29 downto 0);
     signal s_sri_addr16 : std_logic_vector(15 downto 0);
     signal s_sri_din : std_logic_vector(7 downto 0);
@@ -118,7 +117,6 @@ begin
         i_reset => s_reset,
         i_rd => s_sri_rd,
         i_wr => s_sri_wr,
-        i_cs => s_sri_cs,
         i_addr => s_sri_addr,
         i_data => s_sri_din,
         o_data => s_sri_dout,
@@ -158,7 +156,6 @@ begin
             if s_reset = '1' then
                 s_sri_wr <= '0';
                 s_sri_rd <= '0';
-                s_sri_cs <= '1';
                 s_sri_addr16 <= (others => '0');
                 s_sri_din <= (others => '0');
                 s_state <= 0;

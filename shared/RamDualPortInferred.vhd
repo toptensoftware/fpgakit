@@ -47,22 +47,26 @@ begin
 	process (i_clock_a)
 	begin
 		if rising_edge(i_clock_a) then
-			if i_clken_a = '1' and i_write_a = '1' then
-				ram(to_integer(unsigned(i_addr_a))) := i_din_a;
-			end if;
+			if i_clken_a = '1' then
+				if i_write_a = '1' then
+					ram(to_integer(unsigned(i_addr_a))) := i_din_a;
+				end if;
 
-			o_dout_a <= ram(to_integer(unsigned(i_addr_a)));
+				o_dout_a <= ram(to_integer(unsigned(i_addr_a)));
+			end if;
 		end if;
 	end process;
 
 	process (i_clock_b)
 	begin
 		if rising_edge(i_clock_b) then
-			if i_clken_b ='1' and i_write_b = '1' then
-				ram(to_integer(unsigned(i_addr_b))) := i_din_b;
-			end if;
+			if i_clken_b ='1' then
+				if i_write_b = '1' then
+					ram(to_integer(unsigned(i_addr_b))) := i_din_b;
+				end if;
 
-			o_dout_b <= ram(to_integer(unsigned(i_addr_b)));
+				o_dout_b <= ram(to_integer(unsigned(i_addr_b)));
+			end if;
 		end if;
 	end process;
 

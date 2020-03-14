@@ -156,18 +156,12 @@ begin
 	);
 
 	sri : entity work.SimpleRamInterface
-	generic map
-	(
-		p_auto_read => true
-	)
 	port map
 	( 
 		i_clock => s_clock_80mhz,
-		i_clken => s_clken_cpu,
 		i_reset => s_reset,
 		i_rd => s_sri_rd,
 		i_wr => s_sri_wr,
-		i_cs => '1',
 		i_addr => s_sri_addr,
 		i_data => s_sri_din,
 		o_data => s_sri_dout,

@@ -19,8 +19,7 @@ architecture Behavioral of top is
 	signal s_reset : std_logic;
 	signal s_counter : unsigned(11 downto 0);
 	signal s_clken_sevenseg : std_logic;
-	signal s_scan_code : std_logic_vector(6 downto 0);
-	signal s_extended_key : std_logic;
+	signal s_scan_code : std_logic_vector(7 downto 0);
 	signal s_key_release : std_logic;
 	signal s_key_available : std_logic;
 begin
@@ -68,7 +67,6 @@ begin
 		io_ps2_clock => io_ps2_clock,
 		io_ps2_data => io_ps2_data,
 		o_key_scancode => s_scan_code,
-		o_key_extended => s_extended_key,
 		o_key_released => s_key_release,
 		o_key_available => s_key_available
 	);
@@ -82,13 +80,7 @@ begin
 			else
 				if s_key_available = '1' then
 					if s_key_release = '0' then
-						s_counter(6 downto 0) <= unsigned(s_scan_code);
-
-						if s_extended_key = '1' then
-							s_counter(11 downto 7) <= "00010";
-						else
-							s_counter(11 downto 7) <= "00000";
-						end if;
+						s_counter(7 downto 0) <= unsigned(s_scan_code);
 					else
 						s_counter <= (others => '0');
 					end if;

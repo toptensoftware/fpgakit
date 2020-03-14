@@ -59,8 +59,6 @@ begin
 	)
 	port map
 	(
-        o_uart_debug => open,
-
 		i_reset => s_reset,
 		i_clock => s_clock,
 

@@ -30,8 +30,7 @@ port
     io_ps2_data : inout std_logic;                      -- PS2 Data
 
     -- Generated keyboard event
-    o_key_scancode : out std_logic_vector(6 downto 0);  -- Output scan code
-    o_key_extended : out std_logic;                  	-- 0 for normal key, 1 for extended key
+    o_key_scancode : out std_logic_vector(7 downto 0);  -- Output scan code
     o_key_released : out std_logic;                   	-- 0 if press, 1 if release
     o_key_available : out std_logic                 	-- Asserted for one clock cycle on event
 );
@@ -68,7 +67,6 @@ begin
         i_data_available => s_ps2_data_available,
         i_data_error => s_ps2_data_error,
         o_key_scancode => o_key_scancode,
-        o_key_extended => o_key_extended,
         o_key_released => o_key_released,
         o_key_available => o_key_available
     );

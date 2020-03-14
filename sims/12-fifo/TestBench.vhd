@@ -62,12 +62,11 @@ begin
     port map
     ( 
         i_clock => s_clock,
-        i_clken => s_clken,
         i_reset => s_reset,
         i_write => s_write,
-        i_data => s_din,
+        i_din => s_din,
         i_read => s_read,
-        o_data => s_dout,
+        o_dout => s_dout,
         o_full => s_full,
         o_empty => s_empty,
         o_underflow => s_underflow,

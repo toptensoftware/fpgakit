@@ -22,8 +22,7 @@ architecture Behavioral of top is
 	signal s_reset : std_logic;
 	signal s_seven_seg_value : std_logic_vector(11 downto 0);
 	signal s_clken_sevenseg : std_logic;
-	signal s_scan_code : std_logic_vector(6 downto 0);
-	signal s_extended_key : std_logic;
+	signal s_scan_code : std_logic_vector(7 downto 0);
 	signal s_key_release : std_logic;
 	signal s_key_available : std_logic;
 	constant c_delay_ticks : integer := 100_000_000;
@@ -73,7 +72,6 @@ begin
 		io_ps2_data => io_ps2_data,
 		i_leds => s_ps2_leds,
 		o_key_scancode => s_scan_code,
-		o_key_extended => s_extended_key,
 		o_key_released => s_key_release,
 		o_key_available => s_key_available
 	);
@@ -87,13 +85,7 @@ begin
 			else
 				if s_key_available = '1' then
 					if s_key_release = '0' then
-						s_seven_seg_value(6 downto 0) <= s_scan_code;
-
-						if s_extended_key = '1' then
-							s_seven_seg_value(11 downto 7) <= "00010";
-						else
-							s_seven_seg_value(11 downto 7) <= "00000";
-						end if;
+						s_seven_seg_value(7 downto 0) <= s_scan_code;
 					else
 						s_seven_seg_value <= (others => '0');
 					end if;
@@ -108,7 +100,7 @@ begin
 			if s_reset = '1' then
 				s_ps2_leds <= "000";
 			elsif s_key_available = '1' and s_key_release = '0' then
-				case s_extended_key & s_scan_code is
+				case s_scan_code is
 
 					when x"7E" => 
 						-- scroll lock
