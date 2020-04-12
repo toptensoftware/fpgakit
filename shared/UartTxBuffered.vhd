@@ -82,6 +82,7 @@ begin
     port map
     ( 
         i_clock => i_clock,
+        i_clken => '1',
         i_reset => i_reset,
         i_write => i_write,
         i_din => i_din,
