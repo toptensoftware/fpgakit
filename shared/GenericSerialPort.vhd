@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------
 --
--- SysConSerialPort
+-- GenericSerialPort
 --
 -- Implements a buffered serial port
 -- 
@@ -12,7 +12,13 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity SysConSerialPort is
+entity GenericSerialPort is
+generic
+(
+	p_clock_hz : integer;            -- Frequency of the clock
+	p_irq_delay_ms : integer;        -- delay before raising irq in ms
+	p_baud : integer                 -- serial port baud rate
+);
 port
 (
 	-- Clocking
@@ -35,9 +41,9 @@ port
 	i_uart_rx : in std_logic
 
 );
-end SysConSerialPort;
+end GenericSerialPort;
 
-architecture Behavioral of SysConSerialPort is
+architecture Behavioral of GenericSerialPort is
 	signal s_uart_tx_write : std_logic;
 	signal s_uart_tx_din : std_logic_vector(7 downto 0);
 	signal s_uart_tx_count : std_logic_vector(7 downto 0);
@@ -61,7 +67,7 @@ begin
 	e_delayed_rx_irq : entity work.DelayedSignal
 	generic map
 	(
-		p_delay_period => 80_000_000 / 1_000 * 11			-- 11 milliseconds
+		p_delay_period => p_clock_hz * p_irq_delay_ms / 1_000
 	)
 	port map
 	(
@@ -75,7 +81,7 @@ begin
 	e_delayed_tx_irq : entity work.DelayedSignal
 	generic map
 	(
-		p_delay_period => 80_000_000 / 1_000 * 11			-- 11 milliseconds
+		p_delay_period => p_clock_hz * p_irq_delay_ms / 1_000
 	)
 	port map
 	(
@@ -115,8 +121,8 @@ begin
 	uart_tx : entity work.UartTxBuffered
 	generic map
 	(
-		p_clken_hz => 80_000_000,
-		p_baud => 115200,
+		p_clken_hz => p_clock_hz,
+		p_baud => p_baud,
 		p_addr_width => 8
 	)
 	port map
@@ -138,8 +144,8 @@ begin
 	uart_rx : entity work.UartRxBuffered
 	generic map
 	(
-		p_clock_hz => 80_000_000,
-		p_baud => 115200,
+		p_clock_hz => p_clock_hz,
+		p_baud => p_baud,
 		p_sync => true,
 		p_debounce => true,
 		p_addr_width => 8

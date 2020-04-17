@@ -1,8 +1,8 @@
 --------------------------------------------------------------------------
 --
--- SysConDiskController
+-- GenericDiskController
 --
--- Implements a the SysCon Disk Controller
+-- Implements a Generic Disk Controller
 -- 
 -- Copyright (C) 2019 Topten Software.  All Rights Reserved.
 --
@@ -12,7 +12,7 @@ library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 use IEEE.NUMERIC_STD.ALL;
 
-entity SysConDiskController is
+entity GenericDiskController is
 port
 (
 	-- Clocking
@@ -37,9 +37,9 @@ port
 	o_sd_din : out std_logic_vector(7 downto 0);
 	i_sd_dout : in std_logic_vector(7 downto 0)
 );
-end SysConDiskController;
+end GenericDiskController;
 
-architecture Behavioral of SysConDiskController is
+architecture Behavioral of GenericDiskController is
 
 	signal s_sd_op_block_number : std_logic_vector(31 downto 0);
 
