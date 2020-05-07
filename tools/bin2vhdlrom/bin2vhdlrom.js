@@ -10,6 +10,8 @@ let addrWidth = 0;
 let dataWidth = 8;
 let bigEndian = false;
 let writeable = false;
+let clken = false;
+let fillbyte = 0;
 
 for (let i=2; i<process.argv.length; i++)
 {
@@ -65,6 +67,16 @@ for (let i=2; i<process.argv.length; i++)
 
             case "writeable":
                 writeable = true;
+                break;
+
+            case "clken":
+                clken = true;
+                break;
+            
+            case "fillbyte":
+                fillbyte = parseInt(parts[1]);
+                if (fillbyte < 0 || fillbyte > 255)
+                    throw new Error("Fill byte out of range");
                 break;
 
             default:
@@ -139,6 +151,10 @@ out += `entity ${entityName} is\n`;
 out += "port\n";
 out += "(\n";
 out += "	i_clock : in std_logic;\n";
+if (clken)
+{
+out += "	i_clken : in std_logic;\n";
+}
 out += `	i_addr : in std_logic_vector(${addrWidth-1} downto 0);\n`;
 if (writeable)
 {
@@ -166,15 +182,15 @@ for (let i=0; i<dataWords; i++)
 
     if (step == 1)
     {
-        var byte = i < data.length ? data[i] : 0;
+        var byte = i < data.length ? data[i] : fillbyte;
         out += "x\"" + byte.toString(16).padStart(2, "0") + "\"" + comma;
     }
     else if (step == 2)
     {
         let ih = bigEndian ? i*2 : i*2 + 1;
         let il = bigEndian ? i*2 + 1 : i*2;
-        var byteL = il < data.length ? data[il] : 0;
-        var byteH = ih < data.length ? data[ih] : 0;
+        var byteL = il < data.length ? data[il] : fillbyte;
+        var byteH = ih < data.length ? data[ih] : fillbyte;
 
         out += "x\"" + (byteH << 8 | byteL).toString(16).padStart(4, "0") + "\"" + comma;
     }
@@ -185,6 +201,10 @@ out += "begin\n";
 out += "	process (i_clock)\n";
 out += "	begin\n";
 out += "		if rising_edge(i_clock) then\n";
+if (clken)
+{
+out += "		if i_clken='1' then\n";
+}
 if (writeable)
 {
 out += "            if i_write = '1' then\n";
@@ -192,6 +212,10 @@ out += "                ram(to_integer(unsigned(i_addr))) <= i_din;\n";
 out += "            end if;\n";
 }
 out += "			o_dout <= ram(to_integer(unsigned(i_addr)));\n";
+if (clken)
+{
+out += "		end if;\n";
+}
 out += "		end if;\n";
 out += "	end process;\n";
 out += "end;\n";
@@ -216,6 +240,8 @@ function showHelp()
     console.log(" --entity:<name>      name of generated entity");
     console.log(" --addrWidth:<width>  address width");
     console.log(" --dataWidth:<width>  bit data width (8 or 16)");
+    console.log(" --fillbyte:<byte>    fill byte");
     console.log(" --bigendian          use big endian encoding");
     console.log(" --writeable          make a writeable RAM");
+    console.log(" --clken              add a clken signal");
 }

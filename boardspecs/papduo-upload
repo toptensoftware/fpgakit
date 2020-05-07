@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# Call programmer
+papilio-prog -v -f $1 -b auto $*
+
+# Restart FPGA
+papilio-prog -r
