@@ -35,6 +35,7 @@ clean:
 # Settings
 BITTOP ?= top
 BITFILE ?= $(OUTDIR)/$(PROJECTNAME).bit
+BINFILE ?= $(OUTDIR)/$(PROJECTNAME).bin
 UCFFILE ?= $(wildcard *.ucf)
 BOARDSPEC ?= @$(FPGAKIT)/boardspecs/$(TARGETBOARD)-xilt.txt
 TARGETBOARD ?= 
