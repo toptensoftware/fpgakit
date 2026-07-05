@@ -3,6 +3,7 @@ let BitPacket = require('./BitPacket');
 let VcdFileWriter = require('./VcdFileWriter');
 var spawn = require('child_process').spawn;
 let fs = require('fs');
+let path = require('path');
 
 // Default options
 let options = {
@@ -12,7 +13,8 @@ let options = {
     fields: [],
     sampleRate: 100000000n,
     autoView: -1,
-    vcdfile: "logiccap.vcd"
+    vcdfile: "logiccap.vcd",
+    maxCaptures: -1
 }
 
 // Process command line args...
@@ -46,6 +48,10 @@ for (let i=2; i<process.argv.length; i++)
     
             case "autoview":
                 options.autoView = Number(parts[1]);
+                break;
+
+            case "maxcaptures":
+                options.maxCaptures = Number(parts[1]);
                 break;
         }
     }
@@ -123,13 +129,14 @@ else if (options.bitCount != totalWidth)
 }
 
 // open serial port
-let serialPort = new SerialPort(options.port, { baudRate : options.baud});
+let serialPort = new SerialPort.SerialPort({ path: options.port, baudRate: options.baud });
 serialPort.on('data', onReceive);
 
 // allocate receive buffer
 let receiveBufferUsed = -1;
 let receiveBuffer = Buffer.alloc(BitPacket.byteCountForBitWidth(options.bitCount));
 let receivedBuffers = [];
+let captureCount = 0;
 
 let idleTimer;
 function startIdleTimer()
@@ -180,6 +187,52 @@ function onReceive(data)
             receiveBuffer = Buffer.alloc(BitPacket.byteCountForBitWidth(options.bitCount));
         }
     }
+}
+
+function getGtkwSignalName(field)
+{
+    if (field.width == 1)
+        return `signals.${field.name}`;
+
+    return `signals.${field.name}[${field.from-field.to}:0]`;
+}
+
+function writeGtkwFile()
+{
+    let gtkwfile = `${options.vcdfile}.gtkw`;
+    let dumpfile = path.resolve(options.vcdfile);
+    let savefile = path.resolve(gtkwfile);
+    let zoomState = "*-40.000000 0 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1";
+
+    let lines = [
+        "[*]",
+        "[*] GTKWave Analyzer",
+        "[*]",
+        `[dumpfile] "${dumpfile}"`,
+        `[savefile] "${savefile}"`,
+        "[timestart] 0",
+        "[size] 1280 751",
+        "[pos] -1 -1",
+        zoomState,
+        "[treeopen] signals.",
+        "[sst_width] 196",
+        "[signals_width] 250",
+        "[sst_expanded] 1",
+        "[sst_vpaned_height] 200",
+    ];
+
+    for (let i=0; i<options.fields.length; i++)
+    {
+        let f = options.fields[i];
+        lines.push(f.width == 1 ? "@28" : "@22");
+        lines.push(getGtkwSignalName(f));
+    }
+
+    lines.push("[pattern_trace] 1");
+    lines.push("[pattern_trace] 0");
+
+    fs.writeFileSync(gtkwfile, lines.join("\n") + "\n", "utf8");
+    return gtkwfile;
 }
 
 function writeVcdFile()
@@ -249,13 +302,23 @@ function writeVcdFile()
 
     //fs.closeSync(fdDump);
 
-    w.setTime(buffers.length + 1);
+    w.setTime(fsPerSample * BigInt(buffers.length + 1));
     w.close();
+    let gtkwfile = writeGtkwFile();
 
+    captureCount++;
     console.log(`VCD file written. ${options.vcdfile} - ${buffers.length} samples.`);
+    console.log(`GTKWave save file written. ${gtkwfile}`);
     console.log();
 
-    spawn('gtkwave', [`--save=${options.vcdfile}.gtkw`, options.vcdfile], {
+    spawn('gtkwave', [`--save=${options.vcdfile}.gtkw`, options.vcdfile, gtkwfile], {
         detached: true
     });
+
+    // Check if max captures limit reached
+    if (options.maxCaptures > 0 && captureCount >= options.maxCaptures)
+    {
+        console.log(`Reached max captures (${options.maxCaptures}). Exiting.`);
+        process.exit(0);
+    }
 }
